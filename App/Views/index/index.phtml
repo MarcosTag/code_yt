@@ -1,0 +1,37 @@
+<form action="expense" method="post">
+
+    <label for="release_date">Data de lançamento</label>
+    <input type="date" name="release_date" id="release_date">
+
+    <label for="expense_description">Descrição da despesa</label>
+    <input type="text" name="expense_description" id="expense_description">
+
+    <fieldset>
+        <legend>Tipo</legend>
+
+        <input type="radio" name="type" id="account" value="account">
+        <label for="account">Conta corrente</label>
+
+        <input type="radio" name="type" id="credit" value="credit">
+        <label for="credit">Crédito</label>
+
+    </fieldset>
+
+    <fieldset>
+        <legend>Recorrencia</legend>
+
+        <input type="radio" name="recurrence" id="no_recurrence" value="no_recurrence">
+        <label for="no_recurrence">Sem recorrência</label>
+
+        <input type="radio" name="recurrence" id="installment" value="installment">
+        <label for="installment">Parcelar</label>
+
+        <input type="radio" name="recurrence" id="fixed" value="fixed">
+        <label for="fixed">Fixa</label>
+    </fieldset>
+
+    <button type="submit">Registrar</button>
+
+    <span>alteração</span>
+    
+</form>
