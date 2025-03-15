@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Models;
 
-//os recursos do miniframework
-use MF\Controller\Action;
-use MF\Model\Container;
+use MF\Model\Model;
 
-class AppController extends Action {
+class Event extends Model {
 
     private $event_date;
     private $event_description;
@@ -26,16 +24,6 @@ class AppController extends Action {
         return $this->$attr;
     }
 
-
-	public function record_expense() {
-
-        echo '<pre>';
-        print_r($_POST);
-        echo '</pre>';
-		//$this->render('index');
-	}
-
 }
-
 
 ?>
