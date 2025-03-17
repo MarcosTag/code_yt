@@ -15,12 +15,12 @@ class Route extends Bootstrap {
 		];
 
 		$routes['expense'] = [
-			'route'			=>	'/expense',
+			'route'			=>	'/entry',
 			'controller'	=>	'AppController',
 			'action'		=>	'record_expense'
 		];
 
-		$this->setRoutes($routes);
+		$this->setRoutes( $routes );
 	}
 
 }

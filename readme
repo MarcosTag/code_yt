@@ -1,0 +1,14 @@
+#querys
+##query 1
+CREATE TABLE entry(
+	id int NOT null AUTO_INCREMENT PRIMARY KEY,
+    entry_nature varchar(100) NOT null,
+    entry_date datetime DEFAULT CURRENT_TIMESTAMP,
+    entry_release_date date NOT null,
+    entry_type varchar(100) NOT null,
+    entry_description varchar(255) NOT null,
+    entry_recurrence varchar(100) NOT null,
+    entry_effected boolean NOT null,
+    entry_category varchar(100),
+    entry_subcategory varchar(100)
+)

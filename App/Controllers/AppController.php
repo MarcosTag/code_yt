@@ -8,31 +8,41 @@ use MF\Model\Container;
 
 class AppController extends Action {
 
-    private $event_date;
-    private $event_description;
-    private $event_type;
-    private $event_recurrence;
-    private $event_effected;
-    private $event_category;
-    private $event_subcategory;
-
-
-    public function __get( $attr ) {
-        return $this->$attr;
-    }
-
-    public function __set( $attr, $value ) {
-        $this->$attr = $value;
-        return $this->$attr;
-    }
-
 
 	public function record_expense() {
 
+        // foreach ($_POST as $key => $value) {
+        //     echo 'key: ' . $key . '<br>' . 'value: ' . $value;
+        //     echo '<hr>';
+        // }
+
+        // $entry = Container::getModel( 'Entry' );
+        // $entry->entry_save( $_POST );
+
+        // echo '<pre>';
+        // print_r( $entry );
+        // echo '</pre>';
+
+        // $entry_description = filter_input( INPUT_POST, 'entry_description', FILTER_SANI );
+
+        //$data_post = filter_input_array(  );
+
+        $data_post = [
+            'entry_nature'          =>  FILTER_SANITIZE_STRIPPED,
+            'entry_release_date'    =>  FILTER_SANITIZE_STRIPPED,
+            'entry_type'            =>  FILTER_SANITIZE_STRIPPED,
+        ];
+
         echo '<pre>';
-        print_r($_POST);
+        //var_dump($_POST['entry_description'] );
+        echo '<hr>';
+        var_dump( preg_replace( '/\/S/', '', \htmlspecialchars( $_POST['entry_description'] ) ) );
+
+        
         echo '</pre>';
-		//$this->render('index');
+        echo '#\\^[^0-9]\\$#';
+
+
 	}
 
 }

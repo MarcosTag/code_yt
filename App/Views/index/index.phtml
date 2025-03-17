@@ -1,51 +1,61 @@
-<form action="expense" method="post">
+<form action="entry" method="post">
 
-    <label for="release_date">Data de lançamento</label>
-    <input type="date" name="release_date" id="release_date">
+<fieldset>
+        <legend>Natureza</legend>
 
-    <label for="expense_description">Descrição da despesa</label>
-    <input type="text" name="expense_description" id="expense_description">
+        <select name="entry_nature" id="entry_nature">
+            <option value="revenue">Receita</option>
+            <option value="expense">Despesa</option>
+        </select>
+
+    </fieldset>
+
+    <label for="entry_release_date">Data de lançamento</label>
+    <input type="date" name="entry_release_date" id="entry_release_date">
 
     <fieldset>
         <legend>Tipo</legend>
 
-        <input type="radio" name="type" id="account" value="account">
+        <input type="radio" name="entry_type" id="account" value="account">
         <label for="account">Conta corrente</label>
 
-        <input type="radio" name="type" id="credit" value="credit">
+        <input type="radio" name="entry_type" id="credit" value="credit">
         <label for="credit">Crédito</label>
 
     </fieldset>
 
+    <label for="entry_description">Descrição da despesa</label>
+    <textarea name="entry_description" id="entry_description"></textarea>
+
     <fieldset>
         <legend>Recorrencia</legend>
 
-        <input type="radio" name="recurrence" id="no_recurrence" value="no_recurrence">
+        <input type="radio" name="entry_recurrence" id="no_recurrence" value="no_recurrence">
         <label for="no_recurrence">Sem recorrência</label>
 
-        <input type="radio" name="recurrence" id="installment" value="installment">
+        <input type="radio" name="entry_recurrence" id="installment" value="installment">
         <label for="installment">Parcelar</label>
 
-        <input type="radio" name="recurrence" id="fixed" value="fixed">
+        <input type="radio" name="entry_recurrence" id="fixed" value="fixed">
         <label for="fixed">Fixa</label>
     </fieldset>
 
     <fieldset>
         <legend>Efetivada</legend>
 
-        <input type="radio" name="effected" id="effected-yes" value="yes">
+        <input type="radio" name="entry_effected" id="effected-yes" value="yes">
         <label for="effected-yes">Sim</label>
 
-        <input type="radio" name="effected" id="effected-no" value="no">
+        <input type="radio" name="entry_effected" id="effected-no" value="no">
         <label for="effected-no">Não</label>
 
     </fieldset>
 
-    <label for="expense_category">Categoria</label>
-    <input type="text" name="expense_category" id="expense_category">
+    <label for="entry_category">Categoria</label>
+    <input type="text" name="entry_category" id="entry_category">
 
-    <label for="expense_subcategory">Subcategoria</label>
-    <input type="text" name="expense_subcategory" id="expense_subcategory">
+    <label for="entry_subcategory">Subcategoria</label>
+    <input type="text" name="entry_subcategory" id="entry_subcategory">
 
     <button type="submit">Registrar</button>
 

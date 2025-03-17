@@ -9,7 +9,7 @@ abstract class Bootstrap {
 
 	public function __construct() {
 		$this->initRoutes();
-		$this->run($this->getUrl());
+		$this->run( $this->getUrl() );
 	}
 
 	public function getRoutes() {
@@ -20,8 +20,8 @@ abstract class Bootstrap {
 		$this->routes = $routes;
 	}
 
-	protected function run($url) {
-		foreach ($this->getRoutes() as $key => $route) {
+	protected function run( $url ) {
+		foreach ( $this->getRoutes() as $key => $route ) {
 			if($url == $route['route']) {
 				$class = "App\\Controllers\\".ucfirst($route['controller']);
 
