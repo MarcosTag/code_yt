@@ -7,6 +7,7 @@ use MF\Model\Model;
 class Entry extends Model {
 
     private $entry_nature;
+    private $entry_value;
     private $entry_release_date;
     private $entry_type;
     private $entry_description;
