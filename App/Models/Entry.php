@@ -31,8 +31,37 @@ class Entry extends Model {
             $this->__set( $key, $value );
         }
 
-        
+        $query = '
+            insert into entry( 
+                entry_nature, entry_value, entry_release_date, entry_type, entry_description, entry_recurrence, entry_effected, entry_category, entry_subcategory
+            ) values(
+                :entry_nature, :entry_value, :entry_release_date, :entry_type, :entry_description, :entry_recurrence, :entry_effected, :entry_category, :entry_subcategory
+            )
 
+        ';
+
+        $stmt = $this->db->prepare( $query );
+
+        $stmt->bindValue( ':entry_nature', $this->__get( 'entry_nature' ) );
+        $stmt->bindValue( ':entry_value', $this->__get( 'entry_value' ) );
+        $stmt->bindValue( ':entry_release_date', $this->__get( 'entry_release_date' ) );
+        $stmt->bindValue( ':entry_type', $this->__get( 'entry_type' ) );
+        $stmt->bindValue( ':entry_description', $this->__get( 'entry_description' ) );
+        $stmt->bindValue( ':entry_recurrence', $this->__get( 'entry_recurrence' ) );
+        $stmt->bindValue( ':entry_effected', $this->__get( 'entry_effected' ) );
+        $stmt->bindValue( ':entry_category', $this->__get( 'entry_category' ) );
+        $stmt->bindValue( ':entry_subcategory', $this->__get( 'entry_subcategory' ) );
+
+        try {
+            $stmt->execute();
+        } catch (\Throwable $th) {
+            echo '<pre>';
+            print_r( $th );
+            echo '</pre>';
+
+        }
+
+        return $this;
     }
     
 
