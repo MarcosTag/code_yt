@@ -4,13 +4,13 @@
         <legend class="input-legend">Natureza</legend>
 
         <div class="box-input">
-            <input type="radio" name="entry_nature" value="expense">
-            <label for="entry_nature">Despesa</label>
+            <input type="radio" name="entry_nature" id="entry_nature-expense" value="expense">
+            <label for="entry_nature-expense">Despesa</label>
         </div>
 
         <div class="box-input">
-            <input type="radio" name="entry_nature" value="revenue">
-            <label for="entry_nature">Receita</label>
+            <input type="radio" name="entry_nature" id="entry_nature-revenue" value="revenue">
+            <label for="entry_nature-revenue">Receita</label>
         </div>
         
     </fieldset>
@@ -46,7 +46,7 @@
     </div>
     
     <fieldset class="input-legend">
-        <legend>Recorrencia</legend>
+        <legend class="input-legend">Recorrencia</legend>
 
         <div class="box-input">
             <input type="radio" name="entry_recurrence" id="no_recurrence" value="no_recurrence">
@@ -74,15 +74,14 @@
         <input type="text" name="entry_subcategory" id="entry_subcategory">
     </div>
 
-    <div class="box-input">
-        <input type="hidden" name="entry_effected" id="effected-yes" value="1">
-        <label for="effected-yes" class="input-legend">Efetivada</label>
-        <div class="input-toggle"></div>
-
+    <div class="box-input box-toggle">
+        <input type="checkbox" name="entry_effected" id="effected-yes" value="1" hidden>
+        <label for="effected-yes" class="input-legend" id="event-key-toggle" tabindex="0">
+            Efetivada
+            <div class="input-toggle"></div>
+        </label>
     </div>
     
-    <button type="submit">Registrar</button>
-
-    <span>alteração</span>
+    <button type="submit" class="btn btn-primary">Registrar</button>
     
 </form>
