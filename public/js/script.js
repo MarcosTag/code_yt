@@ -29,5 +29,11 @@ $(document).ready(() => {
 
       $("#entry_value").val(posicaoInicial.join(""));
     });
+
+    $("#event-key-toggle").on("keydown", (e) => {
+      if (e.keyCode == "32") {
+        $("#effected-yes").prop("checked", !$("#effected-yes").prop("checked"));
+      }
+    });
   }
 });

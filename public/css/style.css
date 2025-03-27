@@ -1,0 +1,197 @@
+@font-face {
+  font-family: "montserrat-light";
+  src: url("../fonts/Montserrat/static/Montserrat-Light.ttf");
+}
+
+@font-face {
+  font-family: "montserrat-semibold";
+  src: url("../fonts/Montserrat/static/Montserrat-SemiBold.ttf");
+}
+
+@font-face {
+  font-family: "montserrat-bold";
+  src: url("../fonts/Montserrat/static/Montserrat-Bold.ttf");
+}
+
+@font-face {
+  font-family: "encode-sans-expanded-light";
+  src: url("../fonts/Encode_Sans_Expanded/EncodeSansExpanded-Light.ttf");
+}
+
+@font-face {
+  font-family: "encode-sans-expanded-regular";
+  src: url("../fonts/Encode_Sans_Expanded/EncodeSansExpanded-Regular.ttf");
+}
+
+@font-face {
+  font-family: "encode-sans-expanded-medium";
+  src: url("../fonts/Encode_Sans_Expanded/EncodeSansExpanded-Medium.ttf");
+}
+
+:root {
+  --primary: #24e05d;
+  --primary-dark: #021012;
+
+  --primary-light-0: #eff2e7;
+  --primary-light-1: #ecf3d7;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+header {
+  height: 60px;
+  background: var(--primary-light-0);
+  color: var(--primary-dark);
+  padding: 10px 20px;
+  position: sticky;
+  top: 0;
+
+  .box-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-dark);
+    border-radius: 20px;
+  }
+
+  #sumary-header {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: "montserrat-bold";
+  }
+
+  .show-sumary-value {
+    display: flex;
+  }
+}
+
+body {
+  font-family: "encode-sans-expanded-light";
+  background: var(--primary-dark);
+  color: var(--primary-light-1);
+}
+
+main {
+  padding: 20px;
+}
+
+fieldset {
+  border: none;
+}
+
+input[type="text"],
+input[type="tel"],
+input[type="date"] {
+  height: 30px;
+}
+
+input[type="text"],
+input[type="tel"],
+input[type="date"],
+textarea {
+  border: none;
+  padding: 5px;
+  font-family: "encode-sans-expanded-light";
+  border-radius: 2px;
+}
+
+textarea {
+  height: 80px;
+}
+
+.input-legend {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.box-input.label-row {
+  display: flex;
+  flex-direction: column;
+  padding: initial;
+}
+
+.box-input {
+  padding: 2.5px 0 2.5px 10px;
+}
+
+.box-input.box-toggle {
+  padding: 0;
+  /* display: flex;
+  align-items: center;
+  gap: 5px; */
+}
+
+.btn {
+  font-family: "montserrat-bold";
+  text-transform: uppercase;
+  font-size: 16px;
+  width: 100%;
+  height: 40px;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--primary-dark);
+}
+
+legend.input-legend,
+label.input-legend {
+  color: var(--primary);
+}
+
+.box-toggle {
+  .input-legend {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .input-toggle {
+    width: 24px;
+    height: 14px;
+    border-radius: 8px;
+    outline: 3px solid var(--primary-light-0);
+    outline-offset: -1px;
+    display: flex;
+    align-items: center;
+    transition: 0.3s;
+  }
+
+  .input-toggle::after {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    background: var(--primary-light-1);
+    position: relative;
+    left: 3px;
+    transition: 0.3s;
+  }
+
+  #effected-yes:checked + .input-legend .input-toggle {
+    background: var(--primary);
+    outline-color: var(--primary);
+  }
+
+  #effected-yes:checked + .input-legend .input-toggle::after {
+    left: 13px;
+    background: var(--primary-dark);
+  }
+}

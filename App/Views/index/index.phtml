@@ -1,65 +1,86 @@
 <form action="entry" method="post">
 
-    <fieldset>
-        <legend>Natureza</legend>
+    <fieldset class="input-legend">
+        <legend class="input-legend">Natureza</legend>
 
-        <select name="entry_nature" id="entry_nature">
-            <option value="revenue">Receita</option>
-            <option value="expense">Despesa</option>
-        </select>
+        <div class="box-input">
+            <input type="radio" name="entry_nature" value="expense">
+            <label for="entry_nature">Despesa</label>
+        </div>
+
+        <div class="box-input">
+            <input type="radio" name="entry_nature" value="revenue">
+            <label for="entry_nature">Receita</label>
+        </div>
+        
+    </fieldset>
+
+    <div class="box-input label-row">
+        <label for="entry_value" class="input-legend">Valor</label>
+        <input type="tel" name="entry_value" id="entry_value" step=".01" placeholder="0,00">
+    </div>
+
+    <div class="box-input label-row">
+        <label for="entry_release_date" class="input-legend">Data de lançamento</label>
+        <input type="date" name="entry_release_date" id="entry_release_date">
+    </div>
+
+    <fieldset class="input-legend">
+        <legend class="input-legend">Tipo</legend>
+
+        <div class="box-input">
+            <input type="radio" name="entry_type" id="account" value="account">
+            <label for="account">Conta corrente</label>    
+        </div>        
+
+        <div class="box-input">
+            <input type="radio" name="entry_type" id="credit" value="credit">
+            <label for="credit">Crédito</label>                
+        </div>        
 
     </fieldset>
 
-    <label for="entry_value">Valor</label>
-    <input type="tel" name="entry_value" id="entry_value" step=".01" placeholder="0,00">
-
-    <label for="entry_release_date">Data de lançamento</label>
-    <input type="date" name="entry_release_date" id="entry_release_date">
-
-    <fieldset>
-        <legend>Tipo</legend>
-
-        <input type="radio" name="entry_type" id="account" value="account">
-        <label for="account">Conta corrente</label>
-
-        <input type="radio" name="entry_type" id="credit" value="credit">
-        <label for="credit">Crédito</label>
-
-    </fieldset>
-
-    <label for="entry_description">Descrição da despesa</label>
-    <textarea name="entry_description" id="entry_description"></textarea>
-
-    <fieldset>
+    <div class="box-input label-row">
+        <label for="entry_description" class="input-legend">Descrição da despesa</label>
+        <textarea name="entry_description" id="entry_description"></textarea>
+    </div>
+    
+    <fieldset class="input-legend">
         <legend>Recorrencia</legend>
 
-        <input type="radio" name="entry_recurrence" id="no_recurrence" value="no_recurrence">
-        <label for="no_recurrence">Sem recorrência</label>
+        <div class="box-input">
+            <input type="radio" name="entry_recurrence" id="no_recurrence" value="no_recurrence">
+            <label for="no_recurrence">Sem recorrência</label>
+        </div>        
 
-        <input type="radio" name="entry_recurrence" id="installment" value="installment">
-        <label for="installment">Parcelar</label>
+        <div class="box-input">
+            <input type="radio" name="entry_recurrence" id="installment" value="installment">
+            <label for="installment">Parcelar</label>            
+        </div>        
 
-        <input type="radio" name="entry_recurrence" id="fixed" value="fixed">
-        <label for="fixed">Fixa</label>
+        <div class="box-input">
+            <input type="radio" name="entry_recurrence" id="fixed" value="fixed">
+            <label for="fixed">Fixa</label>            
+        </div>        
     </fieldset>
+        
+    <div class="box-input label-row">
+        <label for="entry_category" class="input-legend">Categoria</label>
+        <input type="text" name="entry_category" id="entry_category">
+    </div>
+    
+    <div class="box-input label-row">
+        <label for="entry_subcategory" class="input-legend">Subcategoria</label>
+        <input type="text" name="entry_subcategory" id="entry_subcategory">
+    </div>
 
-    <fieldset>
-        <legend>Efetivada</legend>
+    <div class="box-input">
+        <input type="hidden" name="entry_effected" id="effected-yes" value="1">
+        <label for="effected-yes" class="input-legend">Efetivada</label>
+        <div class="input-toggle"></div>
 
-        <input type="radio" name="entry_effected" id="effected-yes" value="yes">
-        <label for="effected-yes">Sim</label>
-
-        <input type="radio" name="entry_effected" id="effected-no" value="no">
-        <label for="effected-no">Não</label>
-
-    </fieldset>
-
-    <label for="entry_category">Categoria</label>
-    <input type="text" name="entry_category" id="entry_category">
-
-    <label for="entry_subcategory">Subcategoria</label>
-    <input type="text" name="entry_subcategory" id="entry_subcategory">
-
+    </div>
+    
     <button type="submit">Registrar</button>
 
     <span>alteração</span>

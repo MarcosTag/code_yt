@@ -13,7 +13,7 @@ class AppController extends Action {
 
         $data_post_filter = [
             'entry_nature'          =>  preg_replace( '[&lt;|&gt;|/|(alert)|(script)|(select)|(from)|(insert)|(into)|\(|\)|&#039;]', '', \htmlspecialchars( $_POST['entry_nature'] ) ),
-            'entry_value'           =>  preg_replace( '/[^0-9]/', '', \htmlspecialchars( $_POST['entry_value'] ) ),
+            'entry_value'           =>  number_format( preg_replace( '/[^0-9]/', '', \htmlspecialchars( $_POST['entry_value'] ) ) / 100, 2, '.' ),
             'entry_release_date'    =>  preg_replace( '/[^0-9|&#039;|^-]/', '', \htmlspecialchars( $_POST['entry_release_date'] ) ),
             'entry_type'            =>  preg_replace( '[&lt;|&gt;|/|(alert)|(script)|(select)|(from)|(insert)|(into)|\(|\)|&#039;]', '', \htmlspecialchars( $_POST['entry_type'] ) ),
             'entry_description'     =>  preg_replace( '[&lt;|&gt;|/|(alert)|(script)|(select)|(from)|(insert)|(into)|\(|\)|&#039;]', '', \htmlspecialchars( $_POST['entry_description'] ) ),
