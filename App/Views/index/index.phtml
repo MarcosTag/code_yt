@@ -1,4 +1,6 @@
-<form action="entry" method="post">
+<h2 class="section-title accordeon-open" tabindex="0">Registrar Lançamento<i class="fas fa-arrow-alt-circle-down"></i></h2>
+
+<form action="entry" method="post" id="form-entry">
 
     <fieldset class="input-legend">
         <legend class="input-legend">Natureza</legend>
@@ -75,8 +77,8 @@
     </div>
 
     <div class="box-input box-toggle">
-        <input type="checkbox" name="entry_effected" id="effected-yes" value="1" hidden>
-        <label for="effected-yes" class="input-legend" id="event-key-toggle" tabindex="0">
+        <input type="checkbox" name="entry_effected" class="effected-yes" id="effected-yes" value="1" hidden>
+        <label for="effected-yes" class="input-legend event-key-toggle" id="" tabindex="0">
             Efetivada
             <div class="input-toggle"></div>
         </label>
@@ -84,4 +86,41 @@
     
     <button type="submit" class="btn btn-primary">Registrar</button>
     
+</form>
+
+<h2 class="section-title accordeon-open" tabindex="0">Lançamentos<i class="fas fa-arrow-alt-circle-down"></i></h2>
+
+<form action="up_entry" method="post" id="form-entry-sumary">
+    <div class="card-sumary">
+        
+        <div class="icon-card">
+            I
+        </div>
+
+        <div class="content-card-sumary">
+            <div class="arrown-one">
+                <h3 class="entry-name">Cartão Inter</h3>
+                <div class="box-input box-toggle">
+                    <input type="checkbox" name="entry_id" class="effected-yes" id="entry-id" value="1" hidden>
+                    <label for="entry-id" class="input-legend event-key-toggle" id="" tabindex="0">
+                        26/03/25
+                        <div class="input-toggle"></div>
+                    </label>
+                </div>
+            </div>
+    
+            <div class="arrown-two">
+                Despesa fixa
+            </div>
+    
+            <div class="arrown-tree">
+                <div class="entry-tags">
+                    <span class="entry-price"></span>
+                    <span><i class="fas fa-layer-group"></i>Fatura Fechada</span>
+                </div>
+                <i class="fas fa-pencil-alt"></i>
+            </div>
+        </div>
+
+    </div>
 </form>

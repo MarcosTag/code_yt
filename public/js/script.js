@@ -30,10 +30,23 @@ $(document).ready(() => {
       $("#entry_value").val(posicaoInicial.join(""));
     });
 
-    $("#event-key-toggle").on("keydown", (e) => {
+    $(".event-key-toggle").on("keydown", (e) => {
       if (e.keyCode == "32") {
-        $("#effected-yes").prop("checked", !$("#effected-yes").prop("checked"));
+        $(e.currentTarget)
+          .prev()
+          .prop("checked", !$("#effected-yes").prop("checked"));
       }
+    });
+
+    /**
+     *
+     * evento accordeon
+     */
+    $(".accordeon-open").on("click", (e) => {
+      e.preventDefault();
+
+      $(e.currentTarget).children().toggleClass("rotate-180deg");
+      $(e.currentTarget).next().slideToggle(300);
     });
   }
 });
