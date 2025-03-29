@@ -9,6 +9,7 @@ CREATE TABLE entry(
     entry_type varchar(100) NOT null,
     entry_description varchar(255) NOT null,
     entry_recurrence varchar(100) NOT null,
+    entry_qty_installments int DEFAULT 1,
     entry_effected boolean NOT null,
     entry_category varchar(100),
     entry_subcategory varchar(100)

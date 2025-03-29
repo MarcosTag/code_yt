@@ -12,6 +12,7 @@ class Entry extends Model {
     private $entry_type;
     private $entry_description;
     private $entry_recurrence;
+    private $entry_qty_installments;
     private $entry_effected;
     private $entry_category;
     private $entry_subcategory;
@@ -25,7 +26,7 @@ class Entry extends Model {
         // return $this->$attr;
     }
 
-    public function entry_save( $array ) {
+    public function entry_save( array $array ) {
         
         foreach ( $array as $key => $value ) {
             $this->__set( $key, $value );
@@ -33,9 +34,9 @@ class Entry extends Model {
 
         $query = '
             insert into entry( 
-                entry_nature, entry_value, entry_release_date, entry_type, entry_description, entry_recurrence, entry_effected, entry_category, entry_subcategory
+                entry_nature, entry_value, entry_release_date, entry_type, entry_description, entry_recurrence, entry_qty_installments, entry_effected, entry_category, entry_subcategory
             ) values(
-                :entry_nature, :entry_value, :entry_release_date, :entry_type, :entry_description, :entry_recurrence, :entry_effected, :entry_category, :entry_subcategory
+                :entry_nature, :entry_value, :entry_release_date, :entry_type, :entry_description, :entry_recurrence, :entry_qty_installments, :entry_effected, :entry_category, :entry_subcategory
             )
 
         ';
@@ -48,6 +49,7 @@ class Entry extends Model {
         $stmt->bindValue( ':entry_type', $this->__get( 'entry_type' ) );
         $stmt->bindValue( ':entry_description', $this->__get( 'entry_description' ) );
         $stmt->bindValue( ':entry_recurrence', $this->__get( 'entry_recurrence' ) );
+        $stmt->bindValue( ':entry_qty_installments', $this->__get( 'entry_qty_installments' ) );
         $stmt->bindValue( ':entry_effected', $this->__get( 'entry_effected' ) );
         $stmt->bindValue( ':entry_category', $this->__get( 'entry_category' ) );
         $stmt->bindValue( ':entry_subcategory', $this->__get( 'entry_subcategory' ) );

@@ -45,8 +45,38 @@ $(document).ready(() => {
     $(".accordeon-open").on("click", (e) => {
       e.preventDefault();
 
-      $(e.currentTarget).children().toggleClass("rotate-180deg");
+      $($(e.currentTarget).children()[1]).toggleClass("rotate-180deg");
       $(e.currentTarget).next().slideToggle(300);
+    });
+
+    // $("#installment").on("input", (e) => {
+    //   if ($("#installments").length === 0) {
+    //     $(e.currentTarget)
+    //       .parent()
+    //       .parent()
+    //       .after("<div id='installments'>TESTE</div>");
+    //   }
+    // });
+
+    /**
+     *
+     * adiciona os inputs de parcelamento
+     */
+    $('input[name="entry_recurrence"]').on("input", (e) => {
+      if ($("#installment").is(":checked") && $("#installments").length === 0) {
+        $("#installment")
+          .parent()
+          .parent()
+          .after(
+            '<div style="display: none;" id="installments" class="box-input label-row"><label for="entry_qty_installments" class="input-legend">Quantidade de parcelas</label><input type="number" name="entry_qty_installments" id="entry_qty_installments"></div>'
+          );
+
+        $("#installments").slideToggle(300);
+      } else {
+        $("#installments").slideToggle(300, () => {
+          $("#installments").remove();
+        });
+      }
     });
   }
 });

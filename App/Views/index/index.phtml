@@ -1,4 +1,4 @@
-<h2 class="section-title accordeon-open" tabindex="0">Registrar Lançamento<i class="fas fa-arrow-alt-circle-down"></i></h2>
+<h2 class="section-title accordeon-open" tabindex="0"><span>Registrar Lançamento</span><i class="fas fa-arrow-alt-circle-down"></i></h2>
 
 <form action="entry" method="post" id="form-entry">
 
@@ -88,13 +88,13 @@
     
 </form>
 
-<h2 class="section-title accordeon-open" tabindex="0">Lançamentos<i class="fas fa-arrow-alt-circle-down"></i></h2>
+<h2 class="section-title accordeon-open" tabindex="0"><span>Lançamentos</span><i class="fas fa-arrow-alt-circle-down"></i></h2>
 
 <form action="up_entry" method="post" id="form-entry-sumary">
-    <div class="card-sumary">
+    <div class="card-sumary expense">
         
         <div class="icon-card">
-            I
+            <i class="fa-solid fa-arrow-trend-down"></i>
         </div>
 
         <div class="content-card-sumary">
@@ -115,10 +115,47 @@
     
             <div class="arrown-tree">
                 <div class="entry-tags">
-                    <span class="entry-price"></span>
-                    <span><i class="fas fa-layer-group"></i>Fatura Fechada</span>
+                    <span class="entry-price">R$ 905,86</span>
+                    <span class="entry-category btn-icon"><i class="fa-brands fa-cc-mastercard"></i></i>Fatura Fechada</span>
                 </div>
-                <i class="fas fa-pencil-alt"></i>
+                <a href="" class="edit-entry">
+                    <span class="btn-icon">
+                        <i class="fas fa-pencil-alt"></i>
+                    </span>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card-sumary revenue">
+        
+        <div class="icon-card">
+            <i class="fa-solid fa-arrow-trend-up"></i>
+        </div>
+
+        <div class="content-card-sumary">
+            <div class="arrown-one">
+                <h3 class="entry-name">Cartão Inter</h3>
+                <div class="box-input box-toggle">
+                    <input type="checkbox" name="entry_id" class="effected-yes" id="entry-id-0" value="1" hidden>
+                    <label for="entry-id-0" class="input-legend event-key-toggle" id="" tabindex="0">
+                        26/03/25
+                        <div class="input-toggle"></div>
+                    </label>
+                </div>
+            </div>
+    
+            <div class="arrown-two">
+                Despesa fixa
+            </div>
+    
+            <div class="arrown-tree">
+                <div class="entry-tags">
+                    <span class="entry-price">R$ 905,86</span>
+                    <span class="entry-category btn-icon"><i class="fa-brands fa-cc-mastercard"></i></i>Fatura Fechada</span>
+                </div>
+                <a href="" class="edit-entry"><span class="btn-icon"><i class="fas fa-pencil-alt"></i></span></a>
             </div>
         </div>
 
