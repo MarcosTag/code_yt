@@ -8,6 +8,11 @@ use MF\Model\Container;
 
 class AppController extends Action {
 
+    public function index() {
+
+		$this->render('index');
+	}
+
 
 	public function record_expense() {
 

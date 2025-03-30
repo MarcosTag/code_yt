@@ -1,3 +1,18 @@
+<pre>
+    <?php
+        use MF\Model\Container;
+        $entrys = Container::getModel( 'Entry' );
+
+        //$entry->get_entrys_for_month();
+        $getEntrys = $entrys->get_entrys_for_month( 3 );
+
+
+        print_r( $entrys->get_entrys_for_month( 3 ) );
+        
+    ?>
+</pre>
+
+
 <h2 class="section-title accordeon-open" tabindex="0"><span>Registrar Lançamento</span><i class="fas fa-arrow-alt-circle-down"></i></h2>
 
 <form action="entry" method="post" id="form-entry">
@@ -91,42 +106,49 @@
 <h2 class="section-title accordeon-open" tabindex="0"><span>Lançamentos</span><i class="fas fa-arrow-alt-circle-down"></i></h2>
 
 <form action="up_entry" method="post" id="form-entry-sumary">
-    <div class="card-sumary expense">
+
+    <?php foreach( $getEntrys as $key => $entry ) : ?>
+
+        <div class="card-sumary <?php echo $entry['entry_nature'] == 'expense' ? 'expense' : 'revenue' ?>">
         
-        <div class="icon-card">
-            <i class="fa-solid fa-arrow-trend-down"></i>
-        </div>
+            <div class="icon-card">
+                <?php echo $entry['entry_nature'] == 'expense' ? '<i class="fa-solid fa-arrow-trend-down"></i>' : '<i class="fa-solid fa-arrow-trend-up"></i>' ?>
+            </div>
 
-        <div class="content-card-sumary">
-            <div class="arrown-one">
-                <h3 class="entry-name">Cartão Inter</h3>
-                <div class="box-input box-toggle">
-                    <input type="checkbox" name="entry_id" class="effected-yes" id="entry-id" value="1" hidden>
-                    <label for="entry-id" class="input-legend event-key-toggle" id="" tabindex="0">
-                        26/03/25
-                        <div class="input-toggle"></div>
-                    </label>
+            <div class="content-card-sumary">
+                <div class="arrown-one">
+                    <h3 class="entry-name"><?php echo $entry['entry_description'] ?></h3>
+                    <div class="box-input box-toggle">
+                        <input type="checkbox" name="entry_id" class="effected-yes" id="entry-id" value="1" hidden>
+                        <label for="entry-id" class="input-legend event-key-toggle" id="" tabindex="0">
+                            26/03/25
+                            <div class="input-toggle"></div>
+                        </label>
+                    </div>
+                </div>
+        
+                <div class="arrown-two">
+                    Despesa fixa
+                </div>
+        
+                <div class="arrown-tree">
+                    <div class="entry-tags">
+                        <span class="entry-price">R$ 905,86</span>
+                        <span class="entry-category btn-icon"><i class="fa-brands fa-cc-mastercard"></i></i>Fatura Fechada</span>
+                    </div>
+                    <a href="" class="edit-entry">
+                        <span class="btn-icon">
+                            <i class="fas fa-pencil-alt"></i>
+                        </span>
+                    </a>
                 </div>
             </div>
-    
-            <div class="arrown-two">
-                Despesa fixa
-            </div>
-    
-            <div class="arrown-tree">
-                <div class="entry-tags">
-                    <span class="entry-price">R$ 905,86</span>
-                    <span class="entry-category btn-icon"><i class="fa-brands fa-cc-mastercard"></i></i>Fatura Fechada</span>
-                </div>
-                <a href="" class="edit-entry">
-                    <span class="btn-icon">
-                        <i class="fas fa-pencil-alt"></i>
-                    </span>
-                </a>
-            </div>
+
         </div>
 
-    </div>
+    <?php endforeach; ?>
+
+    
 
     <div class="card-sumary revenue">
         

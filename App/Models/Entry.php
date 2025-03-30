@@ -55,7 +55,10 @@ class Entry extends Model {
         $stmt->bindValue( ':entry_subcategory', $this->__get( 'entry_subcategory' ) );
 
         try {
+
             $stmt->execute();
+            return $this;
+
         } catch (\Throwable $th) {
             echo '<pre>';
             print_r( $th );
@@ -63,9 +66,40 @@ class Entry extends Model {
 
         }
 
-        return $this;
     }
     
+    public function get_entrys_for_month( int $month ) {
+
+        $query = '
+            select 
+                id, entry_value, entry_nature,  DATE_FORMAT(entry_date, "%d/%m/%Y") as entry_date, DATE_FORMAT(entry_release_date, "%d/%m/%Y") as entry_release_date, entry_type, entry_description, entry_recurrence, entry_qty_installments, entry_effected, entry_category, entry_subcategory
+            from
+                entry
+            where
+                MONTH(entry_date) = :month;
+        ';
+
+        $stmt = $this->db->prepare( $query );
+
+        $stmt->bindValue( ':month', $month );
+
+        try {
+
+            $stmt->execute();
+		    return $stmt->fetchAll( \PDO::FETCH_ASSOC );
+
+        } catch (\Throwable $th) {
+            echo '<pre>';
+            print_r( $th );
+            echo '</pre>';
+
+        }
+    }
+
+    public function format_entry_value( $value, $coin = 'R$' ) {
+        $value = $coin . ' ' . str_replace( '.', ',', $value );
+        return $value;
+    }
 
 }
 
