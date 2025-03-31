@@ -1,4 +1,4 @@
-<pre>
+
     <?php
         use MF\Model\Container;
         $entrys = Container::getModel( 'Entry' );
@@ -7,10 +7,17 @@
         $getEntrys = $entrys->get_entrys_for_month( 3 );
 
 
-        print_r( $entrys->get_entrys_for_month( 3 ) );
+        //print_r( $entrys->get_entrys_for_month( 3 ) );
+        //print_r( array_column( $getEntrys, 'entry_nature', 'entry_value' ) );
+
+        print_r( 'Entrada: ' . $entrys->get_value_total_entrys( $getEntrys, 'revenue' ) );
+        echo '<br>';
+        print_r( 'Saída: ' . $entrys->get_value_total_entrys( $getEntrys, 'expense' ) );
+        echo '<hr>';
+        print_r( 'Saldo: ' . $entrys->get_value_balance( $getEntrys ) );
         
     ?>
-</pre>
+
 
 
 <h2 class="section-title accordeon-open" tabindex="0"><span>Registrar Lançamento</span><i class="fas fa-arrow-alt-circle-down"></i></h2>
@@ -38,8 +45,8 @@
     </div>
 
     <div class="box-input label-row">
-        <label for="entry_release_date" class="input-legend">Data de lançamento</label>
-        <input type="date" name="entry_release_date" id="entry_release_date">
+        <label for="entry_expected_date" class="input-legend">Data de lançamento</label>
+        <input type="date" name="entry_expected_date" id="entry_expected_date">
     </div>
 
     <fieldset class="input-legend">
@@ -119,22 +126,22 @@
                 <div class="arrown-one">
                     <h3 class="entry-name"><?php echo $entry['entry_description'] ?></h3>
                     <div class="box-input box-toggle">
-                        <input type="checkbox" name="entry_id" class="effected-yes" id="entry-id" value="1" hidden>
-                        <label for="entry-id" class="input-legend event-key-toggle" id="" tabindex="0">
-                            26/03/25
+                        <input type="checkbox" name="entry_id" class="effected-yes" id="entry-<?php echo $entry['id']; ?>" value="1" hidden <?php echo $entry['entry_effected']; ?> <?php echo $entry['entry_effected'] != '0' ? 'checked' : ''; ?>>
+                        <label for="entry-<?php echo $entry['id']; ?>" class="input-legend event-key-toggle" id="" tabindex="0">
+                            <?php echo $entry['entry_expected_date'] ?>
                             <div class="input-toggle"></div>
                         </label>
                     </div>
                 </div>
         
                 <div class="arrown-two">
-                    Despesa fixa
+                    <?php echo $entrys->format_entry_recurrence( $entry['entry_recurrence'] ); ?>
                 </div>
         
                 <div class="arrown-tree">
                     <div class="entry-tags">
-                        <span class="entry-price">R$ 905,86</span>
-                        <span class="entry-category btn-icon"><i class="fa-brands fa-cc-mastercard"></i></i>Fatura Fechada</span>
+                        <span class="entry-price"><?php echo $entrys->format_entry_value( $entry['entry_value'] ); ?></span>
+                        <span class="entry-category btn-icon"><i class="fa-brands fa-cc-mastercard"></i></i><?php echo $entry['entry_category']; ?></span>
                     </div>
                     <a href="" class="edit-entry">
                         <span class="btn-icon">
