@@ -79,7 +79,7 @@ $(document).ready(() => {
       }
     });
 
-    $("form#form-entry-sumary .effected-yes").on("input", (e) => {
+    $("div#display-entry-sumary .effected-yes").on("input", (e) => {
       if (!$(e.currentTarget).prop("checked")) {
         $(e.currentTarget).val(0);
       } else {

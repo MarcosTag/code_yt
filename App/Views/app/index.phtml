@@ -4,7 +4,7 @@
         $entrys = Container::getModel( 'Entry' );
 
         //$entry->get_entrys_for_month();
-        $getEntrys = $entrys->get_entrys_for_month( 4 );
+        $getEntrys = $entrys->get_entrys_for_month( 3 );
 
 
         //print_r( $entrys->get_entrys_for_month( 3 ) );
@@ -112,7 +112,7 @@
 
 <h2 class="section-title accordeon-open" tabindex="0"><span>Lançamentos</span><i class="fas fa-arrow-alt-circle-down"></i></h2>
 
-<form action="up_entry" method="post" id="form-entry-sumary">
+<div id="display-entry-sumary">
 
     <?php foreach( $getEntrys as $key => $entry ) : ?>
 
@@ -150,6 +150,84 @@
                     </a>
                 </div>
             </div>
+
+            <form action="edit_entry" class="form-edity-entry">
+                <fieldset class="input-legend">
+                    <legend class="input-legend">Natureza</legend>
+
+                    <div class="box-input">
+                        <input type="radio" name="edit_entry_nature" id="edit_entry_nature-expense" value="expense">
+                        <label for="edit_entry_nature-expense">Despesa</label>
+                    </div>
+
+                    <div class="box-input">
+                        <input type="radio" name="edit_entry_nature" id="edit_entry_nature-revenue" value="revenue">
+                        <label for="edit_entry_nature-revenue">Receita</label>
+                    </div>
+                    
+                </fieldset>
+
+                <div class="box-input label-row">
+                    <label for="edit_entry_value" class="input-legend">Valor</label>
+                    <input type="tel" name="edit_entry_value" id="edit_entry_value" step=".01" placeholder="0,00">
+                </div>
+
+                <div class="box-input label-row">
+                    <label for="edit_entry_expected_date" class="input-legend">Data de lançamento</label>
+                    <input type="date" name="edit_entry_expected_date" id="edit_entry_expected_date">
+                </div>
+
+                <fieldset class="input-legend">
+                    <legend class="input-legend">Tipo</legend>
+
+                    <div class="box-input">
+                        <input type="radio" name="edit_entry_type" id="account" value="account">
+                        <label for="account">Conta corrente</label>    
+                    </div>        
+
+                    <div class="box-input">
+                        <input type="radio" name="edit_entry_type" id="credit" value="credit">
+                        <label for="credit">Crédito</label>                
+                    </div>        
+
+                </fieldset>
+
+                <div class="box-input label-row">
+                    <label for="edit_entry_description" class="input-legend">Descrição da despesa</label>
+                    <textarea name="edit_entry_description" id="edit_entry_description"></textarea>
+                </div>
+                
+                <fieldset class="input-legend">
+                    <legend class="input-legend">Recorrencia</legend>
+
+                    <div class="box-input">
+                        <input type="radio" name="edit_entry_recurrence" id="no_recurrence" value="no_recurrence">
+                        <label for="no_recurrence">Sem recorrência</label>
+                    </div>        
+
+                    <div class="box-input">
+                        <input type="radio" name="edit_entry_recurrence" id="installment" value="installment">
+                        <label for="installment">Parcelar</label>            
+                    </div>        
+
+                    <div class="box-input">
+                        <input type="radio" name="edit_entry_recurrence" id="fixed" value="fixed">
+                        <label for="fixed">Fixa</label>            
+                    </div>        
+                </fieldset>
+                    
+                <div class="box-input label-row">
+                    <label for="edit_entry_category" class="input-legend">Categoria</label>
+                    <input type="text" name="edit_entry_category" id="edit_entry_category">
+                </div>
+                
+                <div class="box-input label-row">
+                    <label for="edit_entry_subcategory" class="input-legend">Subcategoria</label>
+                    <input type="text" name="edit_entry_subcategory" id="edit_entry_subcategory">
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Registrar</button>
+            </form>
 
         </div>
 
@@ -189,4 +267,4 @@
         </div>
 
     </div>
-</form>
+</div>
