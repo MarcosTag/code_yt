@@ -78,5 +78,53 @@ $(document).ready(() => {
         });
       }
     });
+
+    $("form#form-entry-sumary .effected-yes").on("input", (e) => {
+      if (!$(e.currentTarget).prop("checked")) {
+        $(e.currentTarget).val(0);
+      } else {
+        $(e.currentTarget).val(1);
+      }
+
+      let entryId = $(e.currentTarget)
+        .parent()
+        .parent()
+        .parent()
+        .parent()
+        .attr("id");
+
+      if ($(e.currentTarget).val() == 0 || $(e.currentTarget).val() == 1) {
+        var entryVal = $(e.currentTarget).val();
+      } else {
+        var entryVal = 0;
+      }
+
+      var request = $.ajax({
+        url: "/up_entry_effected",
+        method: "POST",
+        data: {
+          id: entryId,
+          val: entryVal,
+        },
+      });
+
+      // request.done(function (msg) {
+      //   console.log(msg);
+      // });
+
+      // request.fail(function (jqXHR, textStatus) {
+      //   console.log(jqXHR);
+      // });
+
+      request.fail(function (e) {
+        console.log(e);
+      });
+      request.always(function () {
+        console.log("complete");
+      });
+      request.done(function () {
+        console.log("success");
+      });
+    });
   }
 });

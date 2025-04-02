@@ -178,6 +178,42 @@ class Entry extends Model {
         return $balance;
 
     }
+
+    /**
+     * 
+     * 
+     * atualiza a coluna de lançamento efetivado
+     */
+    public function update_entry_effected( $dataUpdate, $idEntry ) {
+
+        $query = '
+            update
+                entry
+            set
+                entry_effected = :dataUpdate
+            where 
+                id = :idEntry
+        ';
+
+        $stmt = $this->db->prepare( $query );
+
+        $stmt->bindValue( ':dataUpdate', $dataUpdate );
+        $stmt->bindValue( ':idEntry', $idEntry );
+
+        try {
+
+            $stmt->execute();
+		    // return $stmt->fetchAll( \PDO::FETCH_ASSOC );
+            return;
+
+        } catch (\Throwable $th) {
+            echo '<pre>';
+            print_r( $th );
+            echo '</pre>';
+
+        }
+
+    }
 }
 
 ?>

@@ -13,7 +13,6 @@ class AppController extends Action {
 		$this->render('index');
 	}
 
-
 	public function record_expense() {
 
         $data_post_filter = [
@@ -34,6 +33,24 @@ class AppController extends Action {
 
         header( 'location: /' );
 	}
+
+    public function controller_update_entry_effected() {
+
+        /** recebe um valor via post do ajax */
+        $entry = Container::getModel( 'Entry' );
+
+        $entry->update_entry_effected( $_POST['val'], $_POST['id'] );
+
+        /** para retornar algum valor para o ajax é necessário echoar algo */
+
+        /**
+         * 
+         * DEBUG
+         */
+        // $codificado = $_POST;
+        // file_put_contents('novo.json', $codificado);
+
+    }
 
 }
 

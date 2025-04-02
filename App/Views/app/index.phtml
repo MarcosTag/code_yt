@@ -4,7 +4,7 @@
         $entrys = Container::getModel( 'Entry' );
 
         //$entry->get_entrys_for_month();
-        $getEntrys = $entrys->get_entrys_for_month( 3 );
+        $getEntrys = $entrys->get_entrys_for_month( 4 );
 
 
         //print_r( $entrys->get_entrys_for_month( 3 ) );
@@ -116,7 +116,7 @@
 
     <?php foreach( $getEntrys as $key => $entry ) : ?>
 
-        <div class="card-sumary <?php echo $entry['entry_nature'] == 'expense' ? 'expense' : 'revenue' ?>">
+        <div class="card-sumary <?php echo $entry['entry_nature'] == 'expense' ? 'expense' : 'revenue' ?>" id="<?php  echo $entry['id']; ?>">
         
             <div class="icon-card">
                 <?php echo $entry['entry_nature'] == 'expense' ? '<i class="fa-solid fa-arrow-trend-down"></i>' : '<i class="fa-solid fa-arrow-trend-up"></i>' ?>
