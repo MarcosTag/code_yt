@@ -175,6 +175,8 @@ h2.section-title > span {
 }
 
 .box-input {
+  display: flex;
+  gap: 5px;
   padding: 2.5px 0 2.5px 10px;
 }
 
@@ -266,7 +268,7 @@ label.input-legend {
 #display-entry-sumary {
   margin-top: 20px;
 
-  label.input-legend {
+  .box-toggle label.input-legend {
     color: inherit;
   }
 
@@ -287,7 +289,6 @@ label.input-legend {
   }
 
   .card-sumary.revenue {
-
     .icon-card i {
       color: var(--primary);
     }
@@ -369,6 +370,7 @@ label.input-legend {
     .form-edity-entry {
       font-size: 12px;
       flex: 1;
+      display: none;
     }
   }
 

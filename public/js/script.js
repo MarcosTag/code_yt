@@ -40,7 +40,7 @@ $(document).ready(() => {
 
     /**
      *
-     * evento accordeon
+     * eventos accordeon
      */
     $(".accordeon-open").on("click", (e) => {
       e.preventDefault();
@@ -49,14 +49,14 @@ $(document).ready(() => {
       $(e.currentTarget).next().slideToggle(300);
     });
 
-    // $("#installment").on("input", (e) => {
-    //   if ($("#installments").length === 0) {
-    //     $(e.currentTarget)
-    //       .parent()
-    //       .parent()
-    //       .after("<div id='installments'>TESTE</div>");
-    //   }
-    // });
+    $(".edit-entry").on("click", (e) => {
+      e.preventDefault();
+
+      console.log($(e.currentTarget).parent().parent().next());
+
+      // $($(e.currentTarget).parent().parent().next()[0]).toggleClass("rotate-180deg");
+      $($(e.currentTarget).parent().parent().next()[0]).slideToggle(300);
+    });
 
     /**
      *
@@ -126,5 +126,37 @@ $(document).ready(() => {
         console.log("success");
       });
     });
+
+    $(".input-entry-value").on("input", (event) => {
+      field_effect_input_value($(event.currentTarget), event);
+      //console.log(event.key);
+    });
+  }
+
+  function field_effect_input_value(element, event) {
+    event.preventDefault();
+    let posicaoInicial = $(element).val().split("");
+
+    posicaoInicial = posicaoInicial.filter((virgula) => virgula !== ",");
+    element.val(posicaoInicial.join(""));
+
+    if (posicaoInicial[0] == 0) {
+      if (posicaoInicial.length < 4) {
+        posicaoInicial.unshift("0");
+      }
+
+      posicaoInicial.push(event.key);
+      posicaoInicial.shift();
+    } else {
+      posicaoInicial.push(event.key);
+    }
+
+    if (posicaoInicial.length < 4) {
+      posicaoInicial.unshift("0");
+    }
+
+    posicaoInicial.splice(posicaoInicial.length - 3, 0, ",");
+
+    element.val(posicaoInicial.join(""));
   }
 });

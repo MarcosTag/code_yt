@@ -123,6 +123,42 @@ class Entry extends Model {
     /**
      * 
      * 
+     * retorna a data de vencimento do lançamento no padrão html
+     */
+    public function get_entry_expected_date_html_for_id( $id ) {
+        
+        $query = '
+            select
+                entry_expected_date
+            from
+                entry
+            where
+                id = :id
+
+        ';
+
+        $stmt = $this->db->prepare( $query );
+
+        $stmt->bindValue( ':id', $id );
+
+        try {
+
+            $stmt->execute();
+		    return $stmt->fetch( \PDO::FETCH_ASSOC )['entry_expected_date'];
+
+        } catch (\Throwable $th) {
+            echo '<pre>';
+            print_r( $th );
+            echo '</pre>';
+
+        }
+
+    }
+
+
+    /**
+     * 
+     * 
      * formata o texto vindo do input recorrencia
      */
     public function format_entry_recurrence( $recurrence ) {
