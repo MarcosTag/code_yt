@@ -215,6 +215,47 @@ class Entry extends Model {
 
     }
 
+    public function update_entry( array $array, $idEntry ) {
+
+        foreach ( $array as $key => $value ) {
+            $this->__set( $key, $value );
+        }
+
+        $query = '
+            update
+                entry
+            set
+                entry_nature = :entry_nature, entry_value = :entry_value, entry_expected_date = :entry_expected_date, entry_type = :entry_type, entry_description = :entry_description, entry_recurrence = :entry_recurrence, entry_qty_installments = :entry_qty_installments, entry_category = :entry_category, entry_subcategory = :entry_subcategory
+            where
+                id = :idEntry
+        ';
+
+        $stmt = $this->db->prepare( $query );
+
+        $stmt->bindValue( ':entry_nature', $this->__get('entry_nature') );
+        $stmt->bindValue( ':entry_value', $this->__get('entry_value') );
+        $stmt->bindValue( ':entry_expected_date', $this->__get('entry_expected_date') );
+        $stmt->bindValue( ':entry_type', $this->__get('entry_type') );
+        $stmt->bindValue( ':entry_description', $this->__get('entry_description') );
+        $stmt->bindValue( ':entry_recurrence', $this->__get('entry_recurrence') );
+        $stmt->bindValue( ':entry_qty_installments', $this->__get('entry_qty_installments') );
+        $stmt->bindValue( ':entry_category', $this->__get('entry_category') );
+        $stmt->bindValue( ':entry_subcategory', $this->__get('entry_subcategory') );
+        $stmt->bindValue( ':idEntry', $idEntry );
+
+        try {
+
+            $stmt->execute();
+		    // return $stmt->fetchAll( \PDO::FETCH_ASSOC );
+            return;
+
+        } catch (\Throwable $th) {
+            echo '<pre>';
+            print_r( $th );
+            echo '</pre>';
+        }
+    }
+
     /**
      * 
      * 
@@ -246,7 +287,6 @@ class Entry extends Model {
             echo '<pre>';
             print_r( $th );
             echo '</pre>';
-
         }
 
     }
