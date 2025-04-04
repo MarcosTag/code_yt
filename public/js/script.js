@@ -52,9 +52,6 @@ $(document).ready(() => {
     $(".edit-entry").on("click", (e) => {
       e.preventDefault();
 
-      console.log($(e.currentTarget).parent().parent().next());
-
-      // $($(e.currentTarget).parent().parent().next()[0]).toggleClass("rotate-180deg");
       $($(e.currentTarget).parent().parent().next()[0]).slideToggle(300);
     });
 
@@ -62,22 +59,41 @@ $(document).ready(() => {
      *
      * adiciona os inputs de parcelamento
      */
-    $('input[name="entry_recurrence"]').on("input", (e) => {
-      if ($("#installment").is(":checked") && $("#installments").length === 0) {
-        $("#installment")
-          .parent()
-          .parent()
-          .after(
-            '<div style="display: none;" id="installments" class="box-input label-row"><label for="entry_qty_installments" class="input-legend">Quantidade de parcelas</label><input type="number" name="entry_qty_installments" id="entry_qty_installments"></div>'
-          );
+    $('input[name="entry_recurrence"], input[name="edit_entry_recurrence"]').on(
+      "input",
+      (e) => {
+        let entryId = $(e.currentTarget)
+          .attr("id")
+          .replace("edit_installment-", "");
 
-        $("#installments").slideToggle(300);
-      } else {
-        $("#installments").slideToggle(300, () => {
-          $("#installments").remove();
-        });
+        if (
+          $(e.currentTarget).val() == "installment" &&
+          $(e.currentTarget).is(":checked") &&
+          $(`#installments-${entryId}`).length === 0
+        ) {
+          $(e.currentTarget)
+            .parent()
+            .parent()
+            .after(
+              `<div style="display: none;" id="installments-${entryId}" class="box-input label-row installments-toggle"><label for="entry_qty_installments-${entryId}" class="input-legend">Quantidade de parcelas</label><input type="number" name="entry_qty_installments-${entryId}" id="entry_qty_installments-${entryId}"></div>`
+            );
+
+          $(`#installments-${entryId}`).slideToggle(300);
+        } else if (
+          $(e.currentTarget).parent().parent().next().attr("class") ==
+          "box-input label-row installments-toggle"
+        ) {
+          $(e.currentTarget)
+            .parent()
+            .parent()
+            .next()
+            .slideToggle(300, () => {
+              $(e.currentTarget).parent().parent().next().remove();
+            });
+          // console.log($(e.currentTarget).parent().parent().next());
+        }
       }
-    });
+    );
 
     $("div#display-entry-sumary .effected-yes").on("input", (e) => {
       if (!$(e.currentTarget).prop("checked")) {
