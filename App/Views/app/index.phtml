@@ -124,16 +124,23 @@
                 <?php echo $entry['entry_nature'] == 'expense' ? '<i class="fa-solid fa-arrow-trend-down"></i>' : '<i class="fa-solid fa-arrow-trend-up"></i>' ?>
             </div>
 
+            <div class="box-input box-toggle">
+                <input type="checkbox" name="entry_id" class="effected-yes" id="entry-<?php echo $entry['id']; ?>" value="1" hidden <?php echo $entry['entry_effected']; ?> <?php echo $entry['entry_effected'] != '0' ? 'checked' : ''; ?>>
+                <label for="entry-<?php echo $entry['id']; ?>" class="input-legend event-key-toggle" id="" tabindex="0">
+                    <?php echo $entry['entry_expected_date'] ?>
+                    <div class="input-toggle"></div>
+                </label>
+            </div>
+
             <div class="content-card-sumary">
                 <div class="arrown-one">
                     <h3 class="entry-name"><?php echo $entry['entry_description'] ?></h3>
-                    <div class="box-input box-toggle">
-                        <input type="checkbox" name="entry_id" class="effected-yes" id="entry-<?php echo $entry['id']; ?>" value="1" hidden <?php echo $entry['entry_effected']; ?> <?php echo $entry['entry_effected'] != '0' ? 'checked' : ''; ?>>
-                        <label for="entry-<?php echo $entry['id']; ?>" class="input-legend event-key-toggle" id="" tabindex="0">
-                            <?php echo $entry['entry_expected_date'] ?>
-                            <div class="input-toggle"></div>
-                        </label>
-                    </div>
+                    <a href="" class="edit-entry">
+                        <span class="btn-icon">
+                            <i class="fas fa-pencil-alt"></i>
+                        </span>
+                    </a>
+                    
                 </div>
         
                 <div class="arrown-two">
@@ -145,26 +152,26 @@
                         <span class="entry-price"><?php echo $entrys->format_entry_value( $entry['entry_value'] ); ?></span>
                         <span class="entry-category btn-icon"><i class="fa-brands fa-cc-mastercard"></i></i><?php echo $entry['entry_category']; ?></span>
                     </div>
-                    <a href="" class="edit-entry">
+                    <a href="" class="remove-entry" id="remove-entry-<?php echo $entry['id']; ?>">
                         <span class="btn-icon">
-                            <i class="fas fa-pencil-alt"></i>
+                            <i class="fa-solid fa-trash-can"></i>
                         </span>
                     </a>
                 </div>
             </div>
 
-            <form action="edit_entry" class="form-edity-entry" id="form-edity-entry">
+            <form action="edit_entry" method="post" class="form-edity-entry" id="form-edity-entry">
                 <fieldset class="input-legend">
                     <legend class="input-legend">Natureza</legend>
 
                     <div class="box-input">
-                        <input type="radio" name="edit_entry_nature" id="edit_entry_nature-expense" value="expense" <?php echo $entry['entry_nature'] == 'expense' ? 'checked' : '' ; ?>>
-                        <label for="edit_entry_nature-expense">Despesa</label>
+                        <input type="radio" name="edit_entry_nature" id="edit_entry_nature-expense-<?php echo $entry['id']?>" value="expense" <?php echo $entry['entry_nature'] == 'expense' ? 'checked' : '' ; ?>>
+                        <label for="edit_entry_nature-expense-<?php echo $entry['id']?>">Despesa</label>
                     </div>
 
                     <div class="box-input">
-                        <input type="radio" name="edit_entry_nature" id="edit_entry_nature-revenue" value="revenue" <?php echo $entry['entry_nature'] == 'revenue' ? 'checked' : '' ; ?>>
-                        <label for="edit_entry_nature-revenue">Receita</label>
+                        <input type="radio" name="edit_entry_nature" id="edit_entry_nature-revenue-<?php echo $entry['id']?>" value="revenue" <?php echo $entry['entry_nature'] == 'revenue' ? 'checked' : '' ; ?>>
+                        <label for="edit_entry_nature-revenue-<?php echo $entry['id']?>">Receita</label>
                     </div>
                     
                 </fieldset>
@@ -175,8 +182,8 @@
                 </div>
 
                 <div class="box-input label-row">
-                    <label for="edit_entry_expected_date" class="input-legend">Data de lançamento</label>
-                    <input type="date" name="edit_entry_expected_date" id="edit_entry_expected_date" <?php echo isset( $entry['entry_expected_date'] ) ? 'value="' . $entrys->get_entry_expected_date_html_for_id( $entry['id'] ) . '"' : '' ?>>
+                    <label for="edit_entry_expected_date-<?php echo $entry['id']?>" class="input-legend">Data de lançamento</label>
+                    <input type="date" name="edit_entry_expected_date" id="edit_entry_expected_date-<?php echo $entry['id']?>" <?php echo isset( $entry['entry_expected_date'] ) ? 'value="' . $entrys->get_entry_expected_date_html_for_id( $entry['id'] ) . '"' : '' ?>>
                     
                 </div>
 
@@ -184,50 +191,52 @@
                     <legend class="input-legend">Tipo</legend>
 
                     <div class="box-input">
-                        <input type="radio" name="edit_entry_type" id="account" value="account" <?php echo $entry['entry_type'] == 'account' ? 'checked' : '' ; ?>>
-                        <label for="account">Conta corrente</label>    
+                        <input type="radio" name="edit_entry_type" id="account-<?php echo $entry['id']?>" value="account" <?php echo $entry['entry_type'] == 'account' ? 'checked' : '' ; ?>>
+                        <label for="account-<?php echo $entry['id']?>">Conta corrente</label>    
                     </div>        
 
                     <div class="box-input">
-                        <input type="radio" name="edit_entry_type" id="credit" value="credit" <?php echo $entry['entry_type'] == 'credit' ? 'checked' : '' ; ?>>
-                        <label for="credit">Crédito</label>                
+                        <input type="radio" name="edit_entry_type" id="credit-<?php echo $entry['id']?>" value="credit" <?php echo $entry['entry_type'] == 'credit' ? 'checked' : '' ; ?>>
+                        <label for="credit-<?php echo $entry['id']?>">Crédito</label>                
                     </div>        
 
                 </fieldset>
 
                 <div class="box-input label-row">
-                    <label for="edit_entry_description" class="input-legend">Descrição da despesa</label>
-                    <textarea name="edit_entry_description" id="edit_entry_description"><?php echo isset( $entry['entry_description'] ) ? $entry['entry_description'] : '' ?></textarea>
+                    <label for="edit_entry_description-<?php echo $entry['id']?>" class="input-legend">Descrição da despesa</label>
+                    <textarea name="edit_entry_description" id="edit_entry_description-<?php echo $entry['id']?>"><?php echo isset( $entry['entry_description'] ) ? $entry['entry_description'] : '' ?></textarea>
                 </div>
                 
                 <fieldset class="input-legend">
                     <legend class="input-legend">Recorrencia</legend>
 
                     <div class="box-input">
-                        <input type="radio" name="edit_entry_recurrence" id="no_recurrence" value="no_recurrence" <?php echo $entry['entry_recurrence'] == 'no_recurrence' ? 'checked' : '' ; ?>>
-                        <label for="no_recurrence">Sem recorrência</label>
+                        <input type="radio" name="edit_entry_recurrence" id="edit_no_recurrence-<?php echo $entry['id']; ?>" value="no_recurrence" <?php echo $entry['entry_recurrence'] == 'no_recurrence' ? 'checked' : '' ; ?>>
+                        <label for="edit_no_recurrence-<?php echo $entry['id']; ?>">Sem recorrência</label>
                     </div>        
 
                     <div class="box-input">
-                        <input type="radio" name="edit_entry_recurrence" id="installment" value="installment" <?php echo $entry['entry_recurrence'] == 'installment' ? 'checked' : '' ; ?>>
-                        <label for="installment">Parcelar</label>            
+                        <input type="radio" name="edit_entry_recurrence" id="edit_installment-<?php echo $entry['id']; ?>" class="installment-recurrence" value="installment" <?php echo $entry['entry_recurrence'] == 'installment' ? 'checked' : '' ; ?>>
+                        <label for="edit_installment-<?php echo $entry['id']; ?>">Parcelar</label>            
                     </div>        
 
                     <div class="box-input">
-                        <input type="radio" name="edit_entry_recurrence" id="fixed" value="fixed" <?php echo $entry['entry_recurrence'] == 'fixed' ? 'checked' : '' ; ?>>
-                        <label for="fixed">Fixa</label>            
+                        <input type="radio" name="edit_entry_recurrence" id="edit_fixed-<?php echo $entry['id']; ?>" value="fixed" <?php echo $entry['entry_recurrence'] == 'fixed' ? 'checked' : '' ; ?>>
+                        <label for="edit_fixed-<?php echo $entry['id']; ?>">Fixa</label>            
                     </div>        
                 </fieldset>
                     
                 <div class="box-input label-row">
-                    <label for="edit_entry_category" class="input-legend">Categoria</label>
-                    <input type="text" name="edit_entry_category" id="edit_entry_category" <?php echo isset( $entry['entry_category'] ) ? 'value="' . $entry['entry_category'] . '"' : '' ?>>
+                    <label for="edit_entry_category-<?php echo $entry['id']?>" class="input-legend">Categoria</label>
+                    <input type="text" name="edit_entry_category" id="edit_entry_category-<?php echo $entry['id']?>" <?php echo isset( $entry['entry_category'] ) ? 'value="' . $entry['entry_category'] . '"' : '' ?>>
                 </div>
                 
                 <div class="box-input label-row">
-                    <label for="edit_entry_subcategory" class="input-legend">Subcategoria</label>
-                    <input type="text" name="edit_entry_subcategory" id="edit_entry_subcategory" <?php echo isset( $entry['entry_subcategory'] ) ? 'value="' . $entry['entry_subcategory'] . '"' : '' ?>>
+                    <label for="edit_entry_subcategory-<?php echo $entry['id']?>" class="input-legend">Subcategoria</label>
+                    <input type="text" name="edit_entry_subcategory" id="edit_entry_subcategory-<?php echo $entry['id']?>" <?php echo isset( $entry['entry_subcategory'] ) ? 'value="' . $entry['entry_subcategory'] . '"' : '' ?>>
                 </div>
+
+                <input type="hidden" name="entry_id" value="<?php echo $entry['id']; ?>">
                 
                 <button type="submit" class="btn btn-primary">Alterar</button>
             </form>
@@ -235,39 +244,5 @@
         </div>
 
     <?php endforeach; ?>
-
     
-
-    <div class="card-sumary revenue">
-        
-        <div class="icon-card">
-            <i class="fa-solid fa-arrow-trend-up"></i>
-        </div>
-
-        <div class="content-card-sumary">
-            <div class="arrown-one">
-                <h3 class="entry-name">Cartão Inter</h3>
-                <div class="box-input box-toggle">
-                    <input type="checkbox" name="entry_id" class="effected-yes" id="entry-id-0" value="1" hidden>
-                    <label for="entry-id-0" class="input-legend event-key-toggle" id="" tabindex="0">
-                        26/03/25
-                        <div class="input-toggle"></div>
-                    </label>
-                </div>
-            </div>
-    
-            <div class="arrown-two">
-                Despesa fixa
-            </div>
-    
-            <div class="arrown-tree">
-                <div class="entry-tags">
-                    <span class="entry-price">R$ 905,86</span>
-                    <span class="entry-category btn-icon"><i class="fa-brands fa-cc-mastercard"></i></i>Fatura Fechada</span>
-                </div>
-                <a href="" class="edit-entry"><span class="btn-icon"><i class="fas fa-pencil-alt"></i></span></a>
-            </div>
-        </div>
-
-    </div>
 </div>
