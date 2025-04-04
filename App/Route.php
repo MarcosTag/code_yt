@@ -26,6 +26,12 @@ class Route extends Bootstrap {
 			'action'		=>	'controller_update_entry_effected'
 		];
 
+		$routes['edit_entry'] = [
+			'route'			=>	'/edit_entry',
+			'controller'	=>	'AppController',
+			'action'		=>	'edit_entry'
+		];
+
 		$this->setRoutes( $routes );
 	}
 
