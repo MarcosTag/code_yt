@@ -32,6 +32,12 @@ class Route extends Bootstrap {
 			'action'		=>	'edit_entry'
 		];
 
+		$routes['remove_entry'] = [
+			'route'			=>	'/remove_entry',
+			'controller'	=>	'AppController',
+			'action'		=>	'remove_entry'
+		];
+
 		$this->setRoutes( $routes );
 	}
 
