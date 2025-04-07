@@ -6,6 +6,7 @@ use MF\Model\Model;
 
 class Entry extends Model {
 
+    private $entry_identifier;
     private $entry_nature;
     private $entry_value;
     private $entry_expected_date;
@@ -38,39 +39,85 @@ class Entry extends Model {
             $this->__set( $key, $value );
         }
 
-        $query = '
-            insert into entry( 
-                entry_nature, entry_value, entry_expected_date, entry_type, entry_description, entry_recurrence, entry_qty_installments, entry_effected, entry_category, entry_subcategory
-            ) values(
-                :entry_nature, :entry_value, :entry_expected_date, :entry_type, :entry_description, :entry_recurrence, :entry_qty_installments, :entry_effected, :entry_category, :entry_subcategory
-            )
+        $recurrence = $this->__get( 'entry_recurrence' );
+        $installments = $this->__get( 'entry_qty_installments' );
+        $dateTime = new \DateTime( $this->__get( 'entry_expected_date' ) );
+        
+        if( $recurrence == 'installment' && $installments > 1 ) {
 
-        ';
+            $parcelas = $this->calculate_installments( $this->__get( 'entry_value' ), $installments );
 
-        $stmt = $this->db->prepare( $query );
+            for ( $i = 0; $i < $installments; $i++ ) { 
 
-        $stmt->bindValue( ':entry_nature', $this->__get( 'entry_nature' ) );
-        $stmt->bindValue( ':entry_value', $this->__get( 'entry_value' ) );
-        $stmt->bindValue( ':entry_expected_date', $this->__get( 'entry_expected_date' ) );
-        $stmt->bindValue( ':entry_type', $this->__get( 'entry_type' ) );
-        $stmt->bindValue( ':entry_description', $this->__get( 'entry_description' ) );
-        $stmt->bindValue( ':entry_recurrence', $this->__get( 'entry_recurrence' ) );
-        $stmt->bindValue( ':entry_qty_installments', $this->__get( 'entry_qty_installments' ) );
-        $stmt->bindValue( ':entry_effected', $this->__get( 'entry_effected' ) );
-        $stmt->bindValue( ':entry_category', $this->__get( 'entry_category' ) );
-        $stmt->bindValue( ':entry_subcategory', $this->__get( 'entry_subcategory' ) );
+                $query = '
+                    insert into entry( 
+                        entry_nature, entry_value, entry_expected_date, entry_type, entry_description, entry_recurrence, entry_qty_installments, entry_effected, entry_category, entry_subcategory
+                    ) values(
+                        :entry_nature, :entry_value, :entry_expected_date, :entry_type, :entry_description, :entry_recurrence, :entry_qty_installments, :entry_effected, :entry_category, :entry_subcategory
+                    )
 
-        try {
+                ';
 
-            $stmt->execute();
-            return $this;
+                $stmt = $this->db->prepare( $query );
 
-        } catch (\Throwable $th) {
-            echo '<pre>';
-            print_r( $th );
-            echo '</pre>';
+                $stmt->bindValue( ':entry_nature', $this->__get( 'entry_nature' ) );
+                $stmt->bindValue( ':entry_value', $parcelas[$i] );
+                $stmt->bindValue( ':entry_expected_date', $dateTime->format( 'Y-m-d' ) );
+                $stmt->bindValue( ':entry_type', $this->__get( 'entry_type' ) );
+                $stmt->bindValue( ':entry_description', $this->__get( 'entry_description' ) );
+                $stmt->bindValue( ':entry_recurrence', $this->__get( 'entry_recurrence' ) );
+                $stmt->bindValue( ':entry_qty_installments', $this->__get( 'entry_qty_installments' ) );
+                $stmt->bindValue( ':entry_effected', $this->__get( 'entry_effected' ) );
+                $stmt->bindValue( ':entry_category', $this->__get( 'entry_category' ) );
+                $stmt->bindValue( ':entry_subcategory', $this->__get( 'entry_subcategory' ) );
 
+                $dateTime->modify( '+1 month' );
+
+                try {
+                    $stmt->execute();
+                    
+                } catch (\Throwable $th) {
+                    echo '<pre>';
+                    print_r( $th );
+                    echo '</pre>';
+                }
+            }
+
+        } else {
+
+            $query = '
+                insert into entry( 
+                    entry_nature, entry_value, entry_expected_date, entry_type, entry_description, entry_recurrence, entry_qty_installments, entry_effected, entry_category, entry_subcategory
+                ) values(
+                    :entry_nature, :entry_value, :entry_expected_date, :entry_type, :entry_description, :entry_recurrence, :entry_qty_installments, :entry_effected, :entry_category, :entry_subcategory
+                )
+
+            ';
+
+            $stmt = $this->db->prepare( $query );
+
+            $stmt->bindValue( ':entry_nature', $this->__get( 'entry_nature' ) );
+            $stmt->bindValue( ':entry_value', $this->__get( 'entry_value' ) );
+            $stmt->bindValue( ':entry_expected_date', $this->__get( 'entry_expected_date' ) );
+            $stmt->bindValue( ':entry_type', $this->__get( 'entry_type' ) );
+            $stmt->bindValue( ':entry_description', $this->__get( 'entry_description' ) );
+            $stmt->bindValue( ':entry_recurrence', $this->__get( 'entry_recurrence' ) );
+            $stmt->bindValue( ':entry_qty_installments', $this->__get( 'entry_qty_installments' ) );
+            $stmt->bindValue( ':entry_effected', $this->__get( 'entry_effected' ) );
+            $stmt->bindValue( ':entry_category', $this->__get( 'entry_category' ) );
+            $stmt->bindValue( ':entry_subcategory', $this->__get( 'entry_subcategory' ) );
+
+            try {
+                $stmt->execute();
+                
+            } catch (\Throwable $th) {
+                echo '<pre>';
+                print_r( $th );
+                echo '</pre>';
+            }
         }
+
+        return $this;
 
     }
     
@@ -83,11 +130,11 @@ class Entry extends Model {
 
         $query = '
             select 
-                id, entry_value, entry_nature,  DATE_FORMAT(entry_date, "%d/%m/%Y") as entry_date, DATE_FORMAT(entry_expected_date, "%d/%m/%Y") as entry_expected_date, entry_type, entry_description, entry_recurrence, entry_qty_installments, entry_effected, entry_category, entry_subcategory
+                id, entry_value, entry_nature, entry_date, DATE_FORMAT(entry_expected_date, "%d/%m/%Y") as entry_expected_date, entry_type, entry_description, entry_recurrence, entry_qty_installments, entry_effected, entry_category, entry_subcategory
             from
                 entry
             where
-                MONTH(entry_date) = :month
+                MONTH(entry_expected_date) = :month
             order by
                 entry_expected_date asc
         ';
@@ -109,6 +156,39 @@ class Entry extends Model {
         }
     }
 
+    /**
+     * 
+     * 
+     * retorna os lançamentos por mês
+     */
+    public function get_entrys_for_entry_date( $entryDate ) {
+
+        $query = '
+            select 
+                id, entry_value, entry_nature, entry_date, entry_expected_date, entry_type, entry_description, entry_recurrence, entry_qty_installments, entry_effected, entry_category, entry_subcategory
+            from
+                entry
+            where
+                entry_date = :entry_date
+        ';
+
+        $stmt = $this->db->prepare( $query );
+
+        $stmt->bindValue( ':entry_date', $entryDate );
+
+        try {
+
+            $stmt->execute();
+		    return $stmt->fetchAll( \PDO::FETCH_ASSOC );
+
+        } catch (\Throwable $th) {
+            echo '<pre>';
+            print_r( $th );
+            echo '</pre>';
+
+        }
+    }
+
 
     /**
      * 
@@ -116,7 +196,7 @@ class Entry extends Model {
      * formata o valor dos lançamentos vindo do banco de dados
      */
     public function format_entry_value( $value, $coin = 'R$' ) {
-        $value = $coin . ' ' . str_replace( '.', ',', $value );
+        $value = $coin . ' ' . /*str_replace( '.', ',', $value )*/ number_format( $value, 2, ',', '.' );
         return $value;
     }
 
@@ -152,8 +232,8 @@ class Entry extends Model {
             echo '</pre>';
 
         }
-
     }
+
 
 
     /**
@@ -288,7 +368,97 @@ class Entry extends Model {
             print_r( $th );
             echo '</pre>';
         }
+    }
 
+    /**
+     * 
+     * 
+     * remove um lançamento baseado no id
+     */
+    public function remove_entry( $entryId ) {
+
+        $query = '
+            delete from
+                entry
+            where
+                id = :entryId
+        ';
+
+        $stmt = $this->db->prepare( $query );
+
+        $stmt->bindValue( ':entryId', $entryId );
+
+        try {
+
+            $stmt->execute();
+		    // return $stmt->fetchAll( \PDO::FETCH_ASSOC );
+            return;
+            
+
+        } catch (\Throwable $th) {
+            echo '<pre>';
+            print_r( $th );
+            echo '</pre>';
+        }
+    }
+
+    public function calculate_installments( $value, $installment ) {
+        
+        $parcela = [];
+        $diferenca = 0;
+
+        for ( $i = 0; $i < $installment ; $i++ ) { 
+
+            if( $i + 1 == $installment ) {
+
+                if( number_format( $parcela[0], 2 ) * $installment > $value ) {
+                    $diferenca = number_format( $parcela[0], 2 ) * $installment - $value;
+                    $parcela[0] = $parcela[0] + $diferenca;
+                    $diferenca = 0;
+                } else {
+                    $diferenca = number_format( $parcela[0], 2 ) * $installment - $value;
+                    $parcela[0] = $parcela[0] - $diferenca;
+
+                    $diferenca = 0;
+                }
+
+                // return number_format( $parcela[1], 2 ) * $installment - $value;
+                // $parcela[]['teste'] = number_format( $parcela[0], 2 ) * $installment - $value;
+                
+            }
+
+            $parcelaFormatada = ( $value / $installment ) - $diferenca;
+
+            //return is_float($parcelaFormatada);
+
+            $parcela[] = number_format( floatval( $parcelaFormatada ) , 2) ;
+        }
+        
+        return $parcela;
+        //return $this->format_entry_value( $value / $installment );
+    }
+
+    public function get_installment_for_month( $month, $entryDate ) {
+
+        $entrysInstallments = $this->get_entrys_for_entry_date( $entryDate );
+
+        $dateExpected = array_column( $entrysInstallments, 'entry_expected_date' );
+        $months = [];
+
+        foreach ( $dateExpected as $key => $date ) {
+            $months[] = date( "m", strtotime( $date ) );
+        }
+
+        $installment = array_search( $month, $months ) + 1;
+
+        return $installment;
+
+    }
+
+    public function sum_values_entry_installments( $entryDate, bool $formatCoin = true ) {
+        $entryValues = array_column( $this->get_entrys_for_entry_date( $entryDate ), 'entry_value' );
+
+        return $formatCoin ? $this->format_entry_value( array_sum( $entryValues ) ) : array_sum( $entryValues );
     }
 }
 
