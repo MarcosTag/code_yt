@@ -4,7 +4,8 @@
         $entrys = Container::getModel( 'Entry' );
 
         //$entry->get_entrys_for_month();
-        $getEntrys = $entrys->get_entrys_for_month( 4 );
+        $month = 4;
+        $getEntrys = $entrys->get_entrys_for_month( $month );
 
 
         //print_r( $entrys->get_entrys_for_month( 3 ) );
@@ -15,8 +16,6 @@
         print_r( 'Saída: ' . $entrys->get_value_total_entrys( $getEntrys, 'expense' ) );
         echo '<hr>';
         print_r( 'Saldo: ' . $entrys->get_value_balance( $getEntrys ) );
-
-
         
     ?>
 
@@ -118,11 +117,27 @@
 
     <?php foreach( $getEntrys as $key => $entry ) : ?>
 
-        <div class="card-sumary <?php echo $entry['entry_nature'] == 'expense' ? 'expense' : 'revenue' ?>" id="<?php  echo $entry['id']; ?>">
+        <div class="card-sumary <?php echo $entry['entry_nature'] == 'expense' ? 'expense' : 'revenue' ?>" id="entry-card-<?php  echo $entry['id']; ?>">
         
             <div class="icon-card">
                 <?php echo $entry['entry_nature'] == 'expense' ? '<i class="fa-solid fa-arrow-trend-down"></i>' : '<i class="fa-solid fa-arrow-trend-up"></i>' ?>
             </div>
+
+            <?php //echo isset( $entry['entry_qty_installments'] ) && $entry['entry_qty_installments'] > 1 ? $entrys->calculate_installments( $entry['entry_value'], $entry['entry_qty_installments'] ) : ''; 
+                // echo '<pre>';
+                // print_r( $entrys->calculate_installments( $entry['entry_value'], $entry['entry_qty_installments'] ) );
+                // echo '<hr>';
+                // print_r( $entry['entry_expected_date'] );
+                // $month = date( "m", strtotime( $entrys->get_entry_expected_date_html_for_id( $entry['id'] ) ) );
+                // echo '<hr>';
+
+                // $date = new \DateTime( $entrys->get_entry_expected_date_html_for_id( $entry['id'] ) );
+                // $date->modify( '+1 month' );
+
+                // print_r( $date->format( 'Y-m-d' ) );
+                // echo '</pre>';
+
+            // ?>
 
             <div class="box-input box-toggle">
                 <input type="checkbox" name="entry_id" class="effected-yes" id="entry-<?php echo $entry['id']; ?>" value="1" hidden <?php echo $entry['entry_effected']; ?> <?php echo $entry['entry_effected'] != '0' ? 'checked' : ''; ?>>
@@ -145,6 +160,11 @@
         
                 <div class="arrown-two">
                     <?php echo $entrys->format_entry_recurrence( $entry['entry_recurrence'] ); ?>
+
+                    <?php if( $entry['entry_recurrence'] == 'installment' ) { ?>
+                         - <?php echo $entrys->get_installment_for_month( $month, $entry['entry_date'] ); ?> / <?php echo $entry['entry_qty_installments'] . ' (<strong class="negat-strong-bold"> '. $entrys->sum_values_entry_installments( $entry['entry_date'] ) .'</strong> )' ?>
+                    <?php } ?>
+
                 </div>
         
                 <div class="arrown-tree">
