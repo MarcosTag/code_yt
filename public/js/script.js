@@ -103,11 +103,10 @@ $(document).ready(() => {
       }
 
       let entryId = $(e.currentTarget)
-        .parent()
-        .parent()
-        .parent()
-        .parent()
-        .attr("id");
+        .parent() //.box-input.box-toggle
+        .parent() //.card-sumary.revenue
+        .attr("id")
+        .replace("entry-card-", "");
 
       if ($(e.currentTarget).val() == 0 || $(e.currentTarget).val() == 1) {
         var entryVal = $(e.currentTarget).val();
@@ -146,6 +145,34 @@ $(document).ready(() => {
     $(".input-entry-value").on("input", (event) => {
       field_effect_input_value($(event.currentTarget), event);
       //console.log(event.key);
+    });
+
+    /**
+     *
+     * evento de exclusão do lançamento
+     */
+    $(".remove-entry").on("click", (e) => {
+      e.preventDefault();
+
+      let entryId = $(e.currentTarget).attr("id").replace("remove-entry-", "");
+
+      var request = $.ajax({
+        url: "/remove_entry",
+        method: "POST",
+        data: {
+          id: entryId,
+        },
+      });
+
+      request.fail(function (e) {
+        console.log(e);
+      });
+      request.always(function () {
+        console.log("complete");
+      });
+      request.done(function () {
+        $(`#entry-card-${entryId}`).remove();
+      });
     });
   }
 
