@@ -32,11 +32,6 @@ class AppController extends Action {
         $entry->entry_save( $data_post_filter );
 
         header( 'location: /' );
-        /*
-        echo '<pre>';
-        print_r($_POST['edit_entry_qty_installments']);
-        echo '</pre>';
-        */
 
 	}
 
@@ -107,6 +102,14 @@ class AppController extends Action {
         // return;
 
         // echo $entryId;
+    }
+
+    public function value_input_entry_qty_installments_ajax() {
+
+        $entry = Container::getModel( 'Entry' );
+
+        echo json_encode( $entry->get_qty_installment_for_id( $_POST['id'] ) );
+
     }
 
 }
