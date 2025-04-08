@@ -123,22 +123,6 @@
                 <?php echo $entry['entry_nature'] == 'expense' ? '<i class="fa-solid fa-arrow-trend-down"></i>' : '<i class="fa-solid fa-arrow-trend-up"></i>' ?>
             </div>
 
-            <?php //echo isset( $entry['entry_qty_installments'] ) && $entry['entry_qty_installments'] > 1 ? $entrys->calculate_installments( $entry['entry_value'], $entry['entry_qty_installments'] ) : ''; 
-                // echo '<pre>';
-                // print_r( $entrys->calculate_installments( $entry['entry_value'], $entry['entry_qty_installments'] ) );
-                // echo '<hr>';
-                // print_r( $entry['entry_expected_date'] );
-                // $month = date( "m", strtotime( $entrys->get_entry_expected_date_html_for_id( $entry['id'] ) ) );
-                // echo '<hr>';
-
-                // $date = new \DateTime( $entrys->get_entry_expected_date_html_for_id( $entry['id'] ) );
-                // $date->modify( '+1 month' );
-
-                // print_r( $date->format( 'Y-m-d' ) );
-                // echo '</pre>';
-
-            // ?>
-
             <div class="box-input box-toggle">
                 <input type="checkbox" name="entry_id" class="effected-yes" id="entry-<?php echo $entry['id']; ?>" value="1" hidden <?php echo $entry['entry_effected']; ?> <?php echo $entry['entry_effected'] != '0' ? 'checked' : ''; ?>>
                 <label for="entry-<?php echo $entry['id']; ?>" class="input-legend event-key-toggle" id="" tabindex="0">
@@ -245,6 +229,15 @@
                         <label for="edit_fixed-<?php echo $entry['id']; ?>">Fixa</label>            
                     </div>        
                 </fieldset>
+
+                <?php 
+                    if( $entry['entry_recurrence'] == 'installment' ) { ?>
+                        <div id="installments-<?php echo $entry['entry_recurrence']; ?>" class="box-input label-row installments-toggle">
+                            <label for="entry_qty_installments-<?php echo $entry['entry_recurrence']; ?>" class="input-legend">Quantidade de parcelas</label>
+                            <input type="number" name="entry_qty_installments-<?php echo $entry['entry_recurrence']; ?>" id="entry_qty_installments-<?php echo $entry['entry_recurrence']; ?>" value="<?php echo $entry['entry_qty_installments']?>">
+                        </div>
+                    <?php }
+                ?>
                     
                 <div class="box-input label-row">
                     <label for="edit_entry_category-<?php echo $entry['id']?>" class="input-legend">Categoria</label>
