@@ -71,14 +71,32 @@ $(document).ready(() => {
           $(e.currentTarget).is(":checked") &&
           $(`#installments-${entryId}`).length === 0
         ) {
-          $(e.currentTarget)
-            .parent()
-            .parent()
-            .after(
-              `<div style="display: none;" id="installments-${entryId}" class="box-input label-row installments-toggle"><label for="entry_qty_installments-${entryId}" class="input-legend">Quantidade de parcelas</label><input type="number" name="entry_qty_installments-${entryId}" id="entry_qty_installments-${entryId}"></div>`
-            );
+          var request = $.ajax({
+            url: "/value-input-entry_qty_installments",
+            method: "POST",
+            data: {
+              id: entryId,
+            },
+          });
 
-          $(`#installments-${entryId}`).slideToggle(300);
+          request.fail(function (e) {
+            console.log(e);
+          });
+          request.always(function () {
+            console.log("complete");
+          });
+          request.done(function (data) {
+            $(e.currentTarget)
+              .parent()
+              .parent()
+              .after(
+                `<div style="display: none;" id="installments-${entryId}" class="box-input label-row installments-toggle"><label for="entry_qty_installments-${entryId}" class="input-legend">Quantidade de parcelas</label><input type="number" name="entry_qty_installments-${entryId}" id="entry_qty_installments-${entryId}" value="${
+                  JSON.parse(data).entry_qty_installments
+                }"></div>`
+              );
+
+            $(`#installments-${entryId}`).slideToggle(300);
+          });
         } else if (
           $(e.currentTarget).parent().parent().next().attr("class") ==
           "box-input label-row installments-toggle"
@@ -91,6 +109,15 @@ $(document).ready(() => {
               $(e.currentTarget).parent().parent().next().remove();
             });
           // console.log($(e.currentTarget).parent().parent().next());
+        } else {
+          $(e.currentTarget)
+            .parent()
+            .parent()
+            .after(
+              `<div style="display: none;" id="installments-${entryId}" class="box-input label-row installments-toggle"><label for="entry_qty_installments-${entryId}" class="input-legend">Quantidade de parcelas</label><input type="number" name="entry_qty_installments-${entryId}" id="entry_qty_installments-${entryId}" value=""></div>`
+            );
+
+          $(`#installments-${entryId}`).slideToggle(300);
         }
       }
     );
