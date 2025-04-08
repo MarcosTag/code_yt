@@ -460,6 +460,34 @@ class Entry extends Model {
 
         return $formatCoin ? $this->format_entry_value( array_sum( $entryValues ) ) : array_sum( $entryValues );
     }
+
+    public function get_qty_installment_for_id( $entryId ) {
+
+        $query = '
+            select
+                entry_qty_installments
+            from
+                entry
+            where
+                id = :entryId
+        ';
+
+        $stmt = $this->db->prepare( $query );
+
+        $stmt->bindValue( ':entryId', $entryId );
+
+        try {
+
+            $stmt->execute();
+		    return $stmt->fetch( \PDO::FETCH_ASSOC ); 
+
+        } catch (\Throwable $th) {
+            echo '<pre>';
+            print_r( $th );
+            echo '</pre>';
+        }
+
+    }
 }
 
 ?>
