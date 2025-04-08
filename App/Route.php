@@ -38,6 +38,12 @@ class Route extends Bootstrap {
 			'action'		=>	'remove_entry'
 		];
 
+		$routes['value-input-entry_qty_installments'] = [
+			'route'			=>	'/value-input-entry_qty_installments',
+			'controller'	=>	'AppController',
+			'action'		=>	'value_input_entry_qty_installments_ajax'
+		];
+
 		$this->setRoutes( $routes );
 	}
 
