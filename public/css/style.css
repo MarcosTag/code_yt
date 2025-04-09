@@ -421,9 +421,4 @@ label.input-legend {
     align-items: center;
     transition: 0.1s;
   }
-
-  strong.negat-strong-bold {
-    font-family: "montserrat-semibold";
-    color: var(--primary-light-0);
-  }
 }
