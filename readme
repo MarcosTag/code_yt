@@ -2,9 +2,9 @@
 ##query 1
 CREATE TABLE entry(
 	id int NOT null AUTO_INCREMENT PRIMARY KEY,
+    id_for_entry varchar(100) NOT null,
     entry_value DECIMAL(8, 2),
     entry_nature varchar(100) NOT null,
-    entry_date datetime DEFAULT CURRENT_TIMESTAMP,
     entry_expected_date date NOT null,
     entry_type varchar(100) NOT null,
     entry_description varchar(255) NOT null,
