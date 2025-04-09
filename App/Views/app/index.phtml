@@ -4,7 +4,7 @@
         $entrys = Container::getModel( 'Entry' );
 
         //$entry->get_entrys_for_month();
-        $month = 4;
+        $month = 5;
         $getEntrys = $entrys->get_entrys_for_month( $month );
 
 
@@ -117,7 +117,7 @@
 
     <?php foreach( $getEntrys as $key => $entry ) : ?>
 
-        <div class="card-sumary <?php echo $entry['entry_nature'] == 'expense' ? 'expense' : 'revenue' ?>" id="entry-card-<?php  echo $entry['id']; ?>">
+        <div class="card-sumary <?php echo $entry['entry_nature'] == 'expense' ? 'expense' : 'revenue' ?> <?php echo $entry['entry_recurrence'] == 'installment' ? 'installment' : '' ?>" id="entry-card-<?php  echo $entry['id']; ?>">
         
             <div class="icon-card">
                 <?php echo $entry['entry_nature'] == 'expense' ? '<i class="fa-solid fa-arrow-trend-down"></i>' : '<i class="fa-solid fa-arrow-trend-up"></i>' ?>
@@ -146,7 +146,7 @@
                     <?php echo $entrys->format_entry_recurrence( $entry['entry_recurrence'] ); ?>
 
                     <?php if( $entry['entry_recurrence'] == 'installment' ) { ?>
-                         - <?php echo $entrys->get_installment_for_month( $month, $entry['entry_date'] ); ?> / <?php echo $entry['entry_qty_installments'] . ' (<strong class="negat-strong-bold"> '. $entrys->sum_values_entry_installments( $entry['entry_date'] ) .'</strong> )' ?>
+                         - <?php echo $entrys->get_installment_for_month( $month, $entry['id_for_entry'] ); ?> / <?php echo $entry['entry_qty_installments'] . ' ( '. $entrys->sum_values_entry_installments( $entry['id_for_entry'] ) .' )' ?>
                     <?php } ?>
 
                 </div>
