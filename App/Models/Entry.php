@@ -6,7 +6,7 @@ use MF\Model\Model;
 
 class Entry extends Model {
 
-    private $entry_identifier;
+    // private $id_for_entry;
     private $entry_nature;
     private $entry_value;
     private $entry_expected_date;
@@ -25,6 +25,13 @@ class Entry extends Model {
     public function __set( $attr, $value ) {
         $this->$attr = $value;
         // return $this->$attr;
+    }
+
+    public function format_id_for_entry() {
+        $dateTime = new \DateTime();
+        $dateTime = $dateTime->format( 'YmdHisvu' );
+
+        return $_SERVER['REMOTE_PORT'] . $dateTime;
     }
 
 
@@ -46,20 +53,22 @@ class Entry extends Model {
         if( $recurrence == 'installment' && $installments > 1 ) {
 
             $parcelas = $this->calculate_installments( $this->__get( 'entry_value' ), $installments );
+            $id_for_entry = $this->format_id_for_entry();
 
             for ( $i = 0; $i < $installments; $i++ ) { 
 
                 $query = '
                     insert into entry( 
-                        entry_nature, entry_value, entry_expected_date, entry_type, entry_description, entry_recurrence, entry_qty_installments, entry_effected, entry_category, entry_subcategory
+                        id_for_entry, entry_nature, entry_value, entry_expected_date, entry_type, entry_description, entry_recurrence, entry_qty_installments, entry_effected, entry_category, entry_subcategory
                     ) values(
-                        :entry_nature, :entry_value, :entry_expected_date, :entry_type, :entry_description, :entry_recurrence, :entry_qty_installments, :entry_effected, :entry_category, :entry_subcategory
+                        :id_for_entry, :entry_nature, :entry_value, :entry_expected_date, :entry_type, :entry_description, :entry_recurrence, :entry_qty_installments, :entry_effected, :entry_category, :entry_subcategory
                     )
 
                 ';
 
                 $stmt = $this->db->prepare( $query );
 
+                $stmt->bindValue( ':id_for_entry', $id_for_entry );
                 $stmt->bindValue( ':entry_nature', $this->__get( 'entry_nature' ) );
                 $stmt->bindValue( ':entry_value', $parcelas[$i] );
                 $stmt->bindValue( ':entry_expected_date', $dateTime->format( 'Y-m-d' ) );
@@ -87,15 +96,16 @@ class Entry extends Model {
 
             $query = '
                 insert into entry( 
-                    entry_nature, entry_value, entry_expected_date, entry_type, entry_description, entry_recurrence, entry_qty_installments, entry_effected, entry_category, entry_subcategory
+                    id_for_entry, entry_nature, entry_value, entry_expected_date, entry_type, entry_description, entry_recurrence, entry_qty_installments, entry_effected, entry_category, entry_subcategory
                 ) values(
-                    :entry_nature, :entry_value, :entry_expected_date, :entry_type, :entry_description, :entry_recurrence, :entry_qty_installments, :entry_effected, :entry_category, :entry_subcategory
+                    :id_for_entry, :entry_nature, :entry_value, :entry_expected_date, :entry_type, :entry_description, :entry_recurrence, :entry_qty_installments, :entry_effected, :entry_category, :entry_subcategory
                 )
 
             ';
 
             $stmt = $this->db->prepare( $query );
 
+            $stmt->bindValue( ':id_for_entry', $this->__get( 'id_for_entry' ) );
             $stmt->bindValue( ':entry_nature', $this->__get( 'entry_nature' ) );
             $stmt->bindValue( ':entry_value', $this->__get( 'entry_value' ) );
             $stmt->bindValue( ':entry_expected_date', $this->__get( 'entry_expected_date' ) );
@@ -130,7 +140,7 @@ class Entry extends Model {
 
         $query = '
             select 
-                id, entry_value, entry_nature, entry_date, DATE_FORMAT(entry_expected_date, "%d/%m/%Y") as entry_expected_date, entry_type, entry_description, entry_recurrence, entry_qty_installments, entry_effected, entry_category, entry_subcategory
+                id,  id_for_entry, entry_value, entry_nature, DATE_FORMAT(entry_expected_date, "%d/%m/%Y") as entry_expected_date, entry_type, entry_description, entry_recurrence, entry_qty_installments, entry_effected, entry_category, entry_subcategory
             from
                 entry
             where
@@ -161,20 +171,20 @@ class Entry extends Model {
      * 
      * retorna os lançamentos por mês
      */
-    public function get_entrys_for_entry_date( $entryDate ) {
+    public function get_entrys_for_key( $entryKey ) {
 
         $query = '
             select 
-                id, entry_value, entry_nature, entry_date, entry_expected_date, entry_type, entry_description, entry_recurrence, entry_qty_installments, entry_effected, entry_category, entry_subcategory
+                id, id_for_entry, entry_value, entry_nature, entry_expected_date, entry_type, entry_description, entry_recurrence, entry_qty_installments, entry_effected, entry_category, entry_subcategory
             from
                 entry
             where
-                entry_date = :entry_date
+                id_for_entry = :id_for_entry
         ';
 
         $stmt = $this->db->prepare( $query );
 
-        $stmt->bindValue( ':entry_date', $entryDate );
+        $stmt->bindValue( ':id_for_entry', $entryKey );
 
         try {
 
@@ -438,9 +448,9 @@ class Entry extends Model {
         //return $this->format_entry_value( $value / $installment );
     }
 
-    public function get_installment_for_month( $month, $entryDate ) {
+    public function get_installment_for_month( $month, $key ) {
 
-        $entrysInstallments = $this->get_entrys_for_entry_date( $entryDate );
+        $entrysInstallments = $this->get_entrys_for_key( $key );
 
         $dateExpected = array_column( $entrysInstallments, 'entry_expected_date' );
         $months = [];
@@ -455,8 +465,8 @@ class Entry extends Model {
 
     }
 
-    public function sum_values_entry_installments( $entryDate, bool $formatCoin = true ) {
-        $entryValues = array_column( $this->get_entrys_for_entry_date( $entryDate ), 'entry_value' );
+    public function sum_values_entry_installments( $entryKey, bool $formatCoin = true ) {
+        $entryValues = array_column( $this->get_entrys_for_key( $entryKey ), 'entry_value' );
 
         return $formatCoin ? $this->format_entry_value( array_sum( $entryValues ) ) : array_sum( $entryValues );
     }
