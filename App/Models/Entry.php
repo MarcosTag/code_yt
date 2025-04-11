@@ -199,6 +199,33 @@ class Entry extends Model {
         }
     }
 
+    public function get_entry_key_for_id( $id ) {
+        
+        $query = '
+            select
+                id_for_entry
+            from   
+                entry
+            where
+                id = :id
+        ';
+
+        $stmt = $this->db->prepare( $query );
+        $stmt->bindValue( ':id', $id );
+
+        try {
+
+            $stmt->execute();
+		    return $stmt->fetch( \PDO::FETCH_ASSOC )['id_for_entry'];
+
+        } catch (\Throwable $th) {
+            echo '<pre>';
+            print_r( $th );
+            echo '</pre>';
+
+        }
+    }
+
 
     /**
      * 
@@ -387,16 +414,18 @@ class Entry extends Model {
      */
     public function remove_entry( $entryId ) {
 
+        $entryKey = $this->get_entry_key_for_id( $entryId );
+
         $query = '
             delete from
                 entry
             where
-                id = :entryId
+                id_for_entry = :entryKey
         ';
 
         $stmt = $this->db->prepare( $query );
 
-        $stmt->bindValue( ':entryId', $entryId );
+        $stmt->bindValue( ':entryKey', $entryKey );
 
         try {
 

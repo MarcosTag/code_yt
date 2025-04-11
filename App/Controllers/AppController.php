@@ -33,11 +33,6 @@ class AppController extends Action {
 
         header( 'location: /' );
 
-
-        // echo '<pre>';
-        // print_r( $_SERVER['REMOTE_PORT'] . $dateTime );
-        // echo '</pre>';
-
 	}
 
     /**
