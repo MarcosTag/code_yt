@@ -6,7 +6,6 @@ use MF\Model\Model;
 
 class Entry extends Model {
 
-    // private $id_for_entry;
     private $entry_nature;
     private $entry_value;
     private $entry_expected_date;
@@ -49,12 +48,12 @@ class Entry extends Model {
         $recurrence = $this->__get( 'entry_recurrence' );
         $installments = $this->__get( 'entry_qty_installments' );
         $dateTime = new \DateTime( $this->__get( 'entry_expected_date' ) );
+        $id_for_entry = $this->format_id_for_entry();
         
         if( $recurrence == 'installment' && $installments > 1 ) {
 
             $parcelas = $this->calculate_installments( $this->__get( 'entry_value' ), $installments );
-            $id_for_entry = $this->format_id_for_entry();
-
+            
             for ( $i = 0; $i < $installments; $i++ ) { 
 
                 $query = '
@@ -105,7 +104,7 @@ class Entry extends Model {
 
             $stmt = $this->db->prepare( $query );
 
-            $stmt->bindValue( ':id_for_entry', $this->__get( 'id_for_entry' ) );
+            $stmt->bindValue( ':id_for_entry', $id_for_entry );
             $stmt->bindValue( ':entry_nature', $this->__get( 'entry_nature' ) );
             $stmt->bindValue( ':entry_value', $this->__get( 'entry_value' ) );
             $stmt->bindValue( ':entry_expected_date', $this->__get( 'entry_expected_date' ) );
@@ -136,7 +135,7 @@ class Entry extends Model {
      * 
      * retorna os lançamentos por mês
      */
-    public function get_entrys_for_month( int $month ) {
+    public function get_entrys_for_month( int $month, int $year ) {
 
         $query = '
             select 
@@ -144,7 +143,7 @@ class Entry extends Model {
             from
                 entry
             where
-                MONTH(entry_expected_date) = :month
+                MONTH(entry_expected_date) = :month && YEAR(entry_expected_date) = :year
             order by
                 entry_expected_date asc
         ';
@@ -152,6 +151,7 @@ class Entry extends Model {
         $stmt = $this->db->prepare( $query );
 
         $stmt->bindValue( ':month', $month );
+        $stmt->bindValue( ':year', $year );
 
         try {
 
@@ -450,13 +450,13 @@ class Entry extends Model {
 
             if( $i + 1 == $installment ) {
 
-                if( number_format( $parcela[0], 2 ) * $installment > $value ) {
-                    $diferenca = number_format( $parcela[0], 2 ) * $installment - $value;
+                if( floatval($parcela[0]) * $installment > $value ) {
+                    $diferenca = $parcela[0] * $installment - $value;
                     $parcela[0] = $parcela[0] + $diferenca;
                     $diferenca = 0;
                 } else {
-                    $diferenca = number_format( $parcela[0], 2 ) * $installment - $value;
-                    $parcela[0] = $parcela[0] - $diferenca;
+                    $diferenca = floatval($parcela[0]) * $installment - $value;
+                    $parcela[0] = floatval($parcela[0]) - $diferenca;
 
                     $diferenca = 0;
                 }
@@ -477,9 +477,9 @@ class Entry extends Model {
         //return $this->format_entry_value( $value / $installment );
     }
 
-    public function get_installment_for_month( $month, $key ) {
+    public function get_installment_for_month( $month, $entryKey ) {
 
-        $entrysInstallments = $this->get_entrys_for_key( $key );
+        $entrysInstallments = $this->get_entrys_for_key( $entryKey );
 
         $dateExpected = array_column( $entrysInstallments, 'entry_expected_date' );
         $months = [];
