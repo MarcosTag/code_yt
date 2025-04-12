@@ -443,37 +443,34 @@ class Entry extends Model {
 
     public function calculate_installments( $value, $installment ) {
         
-        $parcela = [];
+        $parcelas = [];
         $diferenca = 0;
 
         for ( $i = 0; $i < $installment ; $i++ ) { 
 
-            if( $i + 1 == $installment ) {
+            if( $i == $installment ) {
 
-                if( floatval($parcela[0]) * $installment > $value ) {
-                    $diferenca = $parcela[0] * $installment - $value;
-                    $parcela[0] = $parcela[0] + $diferenca;
+                if( $parcelas[0] * $installment > $value ) {
+                    $diferenca = $parcelas[0] * $installment - $value;
+                    $parcelas[0] = $parcelas[0] + $diferenca;
                     $diferenca = 0;
                 } else {
-                    $diferenca = floatval($parcela[0]) * $installment - $value;
-                    $parcela[0] = floatval($parcela[0]) - $diferenca;
+                    $diferenca = $parcelas[0] * $installment - $value;
+                    $parcelas[0] = $parcelas[0] - $diferenca;
 
                     $diferenca = 0;
                 }
 
-                // return number_format( $parcela[1], 2 ) * $installment - $value;
-                // $parcela[]['teste'] = number_format( $parcela[0], 2 ) * $installment - $value;
                 
             }
 
-            $parcelaFormatada = ( $value / $installment ) - $diferenca;
+            $parcelasFormatada = ( $value / $installment ) - $diferenca;
 
-            //return is_float($parcelaFormatada);
 
-            $parcela[] = number_format( floatval( $parcelaFormatada ) , 2) ;
+            $parcelas[] = $parcelasFormatada;
         }
         
-        return $parcela;
+        return $parcelas;
         //return $this->format_entry_value( $value / $installment );
     }
 
