@@ -108,7 +108,8 @@ fieldset {
 input[type="text"],
 input[type="tel"],
 input[type="date"],
-input[type="number"] {
+input[type="number"],
+input[type="month"] {
   height: 30px;
 }
 
@@ -116,6 +117,7 @@ input[type="text"],
 input[type="tel"],
 input[type="date"],
 input[type="number"],
+input[type="month"],
 textarea {
   border: none;
   padding: 5px;
