@@ -217,6 +217,28 @@ if (typeof $("#entry_value") != null) {
   });
 }
 
+$("#entry_month").on("input", (e) => {
+  let date = $(e.target).val();
+
+  var request = $.ajax({
+    url: "/entry_for_month",
+    method: "POST",
+    data: {
+      date: date,
+    },
+  });
+
+  request.fail(function (e) {
+    console.log(e);
+  });
+  request.always(function () {
+    console.log("complete");
+  });
+  request.done(function () {
+    $(`#entry-card-${entryId}`).remove();
+  });
+});
+
 function field_effect_input_value(element, event) {
   event.preventDefault();
   let posicaoInicial = $(element).val().split("");
