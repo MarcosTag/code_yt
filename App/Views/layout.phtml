@@ -21,11 +21,19 @@
 
 	<body>
 
+		<?php
+			use MF\Model\Container;
+			$entrys = Container::getModel( 'Entry' );
+			$month = date('m');
+			$year = date('Y');
+			$getEntrys = $entrys->get_entrys_for_month( $month, $year );
+		?>
+
 		<header>
 			<div class="box-header">
 				<div class="logo"></div>
 				<div id="sumary-header">
-					<div class="sumary-value">R$ 1.160,00</div>
+					<div class="sumary-value <?php echo $entrys->get_value_balance( $getEntrys ) < 0 ? 'color-allert' : '';?>"><?php echo $entrys->get_value_balance( $getEntrys ) < 0 ? '- ' : '';?><?php echo $entrys->format_entry_value( abs( $entrys->get_value_balance( $getEntrys ) ) ); ?></div>
 					<div class="show-sumary-value"><img src="icons/view-value.svg" alt=""></div>
 				</div>
 			</div>
