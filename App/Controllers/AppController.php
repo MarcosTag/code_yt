@@ -112,6 +112,17 @@ class AppController extends Action {
 
     }
 
+    public function controller_get_entrys_for_month() {
+        
+        $entry = Container::getModel( 'Entry' );
+
+        $dateArray = explode( '-', $_POST['date'] );
+        $year = $dateArray[0];
+        $month = $dateArray[1];
+
+        $entry->get_format_display_entry_sumary( $month, $year );
+    }
+
 }
 
 
