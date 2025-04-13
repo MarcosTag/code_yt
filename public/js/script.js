@@ -234,8 +234,161 @@ $("#entry_month").on("input", (e) => {
   request.always(function () {
     console.log("complete");
   });
-  request.done(function () {
-    $(`#entry-card-${entryId}`).remove();
+  request.done(function (data) {
+    $("#display-entry-sumary")
+      .html(data)
+      .ready(() => {
+        $(".event-key-toggle").on("keydown", (e) => {
+          if (e.keyCode == "32") {
+            $(e.currentTarget)
+              .prev()
+              .prop("checked", !$("#effected-yes").prop("checked"));
+          }
+        });
+
+        $(".edit-entry").on("click", (e) => {
+          e.preventDefault();
+
+          $($(e.currentTarget).parent().parent().next()[0]).slideToggle(300);
+        });
+
+        /**
+         *
+         * adiciona os inputs de parcelamento
+         */
+        $('input[name="edit_entry_recurrence"]').on("input", (e) => {
+          let entryId = $(e.currentTarget)
+            .attr("id")
+            .replace("edit_installment-", "");
+
+          if (
+            $(e.currentTarget).val() == "installment" &&
+            $(e.currentTarget).is(":checked") &&
+            $(`#installments-${entryId}`).length === 0
+          ) {
+            var request = $.ajax({
+              url: "/value-input-entry_qty_installments",
+              method: "POST",
+              data: {
+                id: entryId,
+              },
+            });
+
+            request.fail(function (e) {
+              console.log(e);
+            });
+            request.always(function () {
+              console.log("complete");
+            });
+            request.done(function (data) {
+              $(e.currentTarget)
+                .parent()
+                .parent()
+                .after(
+                  `<div style="display: none;" id="installments-${entryId}" class="box-input label-row installments-toggle"><label for="entry_qty_installments-${entryId}" class="input-legend">Quantidade de parcelas</label><input type="number" name="entry_qty_installments-${entryId}" id="entry_qty_installments-${entryId}" value="${
+                    JSON.parse(data).entry_qty_installments
+                  }"></div>`
+                );
+
+              $(`#installments-${entryId}`).slideToggle(300);
+            });
+          } else if (
+            $(e.currentTarget).parent().parent().next().attr("class") ==
+            "box-input label-row installments-toggle"
+          ) {
+            $(e.currentTarget)
+              .parent()
+              .parent()
+              .next()
+              .slideToggle(300, () => {
+                $(e.currentTarget).parent().parent().next().remove();
+              });
+            // console.log($(e.currentTarget).parent().parent().next());
+          }
+        });
+
+        $("div#display-entry-sumary .effected-yes").on("input", (e) => {
+          if (!$(e.currentTarget).prop("checked")) {
+            $(e.currentTarget).val(0);
+          } else {
+            $(e.currentTarget).val(1);
+          }
+
+          let entryId = $(e.currentTarget)
+            .parent() //.box-input.box-toggle
+            .parent() //.card-sumary.revenue
+            .attr("id")
+            .replace("entry-card-", "");
+
+          if ($(e.currentTarget).val() == 0 || $(e.currentTarget).val() == 1) {
+            var entryVal = $(e.currentTarget).val();
+          } else {
+            var entryVal = 0;
+          }
+
+          var request = $.ajax({
+            url: "/up_entry_effected",
+            method: "POST",
+            data: {
+              id: entryId,
+              val: entryVal,
+            },
+          });
+
+          // request.done(function (msg) {
+          //   console.log(msg);
+          // });
+
+          // request.fail(function (jqXHR, textStatus) {
+          //   console.log(jqXHR);
+          // });
+
+          request.fail(function (e) {
+            console.log(e);
+          });
+          request.always(function () {
+            console.log("complete");
+          });
+          request.done(function () {
+            console.log("success");
+          });
+        });
+
+        $(".input-entry-value").on("input", (event) => {
+          field_effect_input_value($(event.currentTarget), event);
+          //console.log(event.key);
+        });
+
+        /**
+         *
+         * evento de exclusão do lançamento
+         */
+        $(".remove-entry").on("click", (e) => {
+          e.preventDefault();
+
+          let entryId = $(e.currentTarget)
+            .attr("id")
+            .replace("remove-entry-", "");
+
+          var request = $.ajax({
+            url: "/remove_entry",
+            method: "POST",
+            data: {
+              id: entryId,
+            },
+          });
+
+          request.fail(function (e) {
+            console.log(e);
+          });
+          request.always(function () {
+            console.log("complete");
+          });
+          request.done(function () {
+            $(`#entry-card-${entryId}`).remove();
+          });
+        });
+      });
   });
 });
 
