@@ -211,6 +211,10 @@ label.input-legend {
   color: var(--primary);
 }
 
+.color-allert {
+  color: var(--allert);
+}
+
 .box-toggle {
   .input-legend {
     display: flex;
