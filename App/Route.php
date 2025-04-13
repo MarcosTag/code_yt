@@ -44,6 +44,12 @@ class Route extends Bootstrap {
 			'action'		=>	'value_input_entry_qty_installments_ajax'
 		];
 
+		$routes['entry_for_month'] = [
+			'route'			=>	'/entry_for_month',
+			'controller'	=>	'AppController',
+			'action'		=>	'controller_get_entrys_for_month'
+		];
+
 		$this->setRoutes( $routes );
 	}
 
