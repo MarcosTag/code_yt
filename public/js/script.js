@@ -217,6 +217,46 @@ if (typeof $("#entry_value") != null) {
   });
 }
 
+/**
+ *
+ *
+ * evento de lançamento do cartão de crédito
+ */
+$("input[name='entry_type']").on("input", (e) => {
+  // if ($(e.currentTarget).is(":checked")) {
+  if (
+    $(e.currentTarget).val() == "credit" &&
+    $(e.currentTarget).is(":checked")
+  ) {
+    $(e.currentTarget).parent().parent().after(`
+      <div style="display: none;" id="credit-card-select" class="box-input">
+        <select name="entry_credit_card">
+          <option value="Inter">Inter</option>
+          <option value="Will">Will</option>
+          <option value="Mercado Pago">Mercado Pago</option>
+        </select>
+      </div>
+    `);
+    $(`#credit-card-select`).slideToggle(300);
+  } else if (
+    $(e.currentTarget).parent().parent().next().attr("id") ==
+    "credit-card-select"
+  ) {
+    $(e.currentTarget)
+      .parent()
+      .parent()
+      .next()
+      .slideToggle(300, () => {
+        $(e.currentTarget).parent().parent().next().remove();
+      });
+  }
+});
+
+/**
+ *
+ *
+ * evento de mudança de mês;
+ */
 $("#entry_month").on("input", (e) => {
   let date = $(e.target).val();
 
