@@ -109,7 +109,8 @@ input[type="text"],
 input[type="tel"],
 input[type="date"],
 input[type="number"],
-input[type="month"] {
+input[type="month"],
+select {
   height: 30px;
 }
 
@@ -118,7 +119,8 @@ input[type="tel"],
 input[type="date"],
 input[type="number"],
 input[type="month"],
-textarea {
+textarea,
+select {
   border: none;
   padding: 5px;
   font-family: "encode-sans-expanded-light";
