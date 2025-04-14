@@ -10,6 +10,7 @@ class Entry extends Model {
     private $entry_value;
     private $entry_expected_date;
     private $entry_type;
+    private $entry_credit_card;
     private $entry_description;
     private $entry_recurrence;
     private $entry_qty_installments;
@@ -49,49 +50,14 @@ class Entry extends Model {
         $installments = $this->__get( 'entry_qty_installments' );
         $dateTime = new \DateTime( $this->__get( 'entry_expected_date' ) );
         $id_for_entry = $this->format_id_for_entry();
+
+        $parcelas = $this->calculate_installments( $this->__get( 'entry_value' ), $installments );
         
-        if( $recurrence == 'installment' && $installments > 1 ) {
+        for ( $i = 0; $i < $installments; $i++ ) { 
 
-            $parcelas = $this->calculate_installments( $this->__get( 'entry_value' ), $installments );
-            
-            for ( $i = 0; $i < $installments; $i++ ) { 
+            // if( $this->__get( 'entry_nature' ) == 'credit' ) {
 
-                $query = '
-                    insert into entry( 
-                        id_for_entry, entry_nature, entry_value, entry_expected_date, entry_type, entry_description, entry_recurrence, entry_qty_installments, entry_effected, entry_category, entry_subcategory
-                    ) values(
-                        :id_for_entry, :entry_nature, :entry_value, :entry_expected_date, :entry_type, :entry_description, :entry_recurrence, :entry_qty_installments, :entry_effected, :entry_category, :entry_subcategory
-                    )
-
-                ';
-
-                $stmt = $this->db->prepare( $query );
-
-                $stmt->bindValue( ':id_for_entry', $id_for_entry );
-                $stmt->bindValue( ':entry_nature', $this->__get( 'entry_nature' ) );
-                $stmt->bindValue( ':entry_value', $parcelas[$i] );
-                $stmt->bindValue( ':entry_expected_date', $dateTime->format( 'Y-m-d' ) );
-                $stmt->bindValue( ':entry_type', $this->__get( 'entry_type' ) );
-                $stmt->bindValue( ':entry_description', $this->__get( 'entry_description' ) );
-                $stmt->bindValue( ':entry_recurrence', $this->__get( 'entry_recurrence' ) );
-                $stmt->bindValue( ':entry_qty_installments', $this->__get( 'entry_qty_installments' ) );
-                $stmt->bindValue( ':entry_effected', $this->__get( 'entry_effected' ) );
-                $stmt->bindValue( ':entry_category', $this->__get( 'entry_category' ) );
-                $stmt->bindValue( ':entry_subcategory', $this->__get( 'entry_subcategory' ) );
-
-                $dateTime->modify( '+1 month' );
-
-                try {
-                    $stmt->execute();
-                    
-                } catch (\Throwable $th) {
-                    echo '<pre>';
-                    print_r( $th );
-                    echo '</pre>';
-                }
-            }
-
-        } else {
+            // }
 
             $query = '
                 insert into entry( 
@@ -106,8 +72,8 @@ class Entry extends Model {
 
             $stmt->bindValue( ':id_for_entry', $id_for_entry );
             $stmt->bindValue( ':entry_nature', $this->__get( 'entry_nature' ) );
-            $stmt->bindValue( ':entry_value', $this->__get( 'entry_value' ) );
-            $stmt->bindValue( ':entry_expected_date', $this->__get( 'entry_expected_date' ) );
+            $stmt->bindValue( ':entry_value', $parcelas[$i] );
+            $stmt->bindValue( ':entry_expected_date', $dateTime->format( 'Y-m-d' ) );
             $stmt->bindValue( ':entry_type', $this->__get( 'entry_type' ) );
             $stmt->bindValue( ':entry_description', $this->__get( 'entry_description' ) );
             $stmt->bindValue( ':entry_recurrence', $this->__get( 'entry_recurrence' ) );
@@ -115,6 +81,8 @@ class Entry extends Model {
             $stmt->bindValue( ':entry_effected', $this->__get( 'entry_effected' ) );
             $stmt->bindValue( ':entry_category', $this->__get( 'entry_category' ) );
             $stmt->bindValue( ':entry_subcategory', $this->__get( 'entry_subcategory' ) );
+
+            $dateTime->modify( '+1 month' );
 
             try {
                 $stmt->execute();
@@ -124,6 +92,7 @@ class Entry extends Model {
                 print_r( $th );
                 echo '</pre>';
             }
+
         }
 
         return $this;
