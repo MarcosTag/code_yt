@@ -1,5 +1,5 @@
 #querys
-##query 1
+##tables
 CREATE TABLE entry(
 	id int NOT null AUTO_INCREMENT PRIMARY KEY,
     id_for_entry varchar(100) NOT null,
@@ -14,3 +14,19 @@ CREATE TABLE entry(
     entry_category varchar(100),
     entry_subcategory varchar(100)
 )
+
+CREATE TABLE entry_credit_card(
+    id_entry_credit_card int NOT null AUTO_INCREMENT PRIMARY KEY,
+    card_name varchar(100) NOT null,
+    fk_entry_id int NOT null,
+    FOREIGN KEY(fk_entry_id) REFERENCES entry(id)
+)
+
+/**
+ *
+ *  OBS:
+ *
+ *
+ * CRIAR CADASTRO DE CARTÕES PARA CRIAR DATA DE VENCIMENTO E DATA DE FECHAMENTO DE CARTÃO
+ * CRIAR FUNÇÃO QUE CALCULA COM BASE NO CARTÃO SE O LANÇAMENTO ENTRARÁ NA FATURA DO MÊS ATUAL OU DO PRÓXIMO
+ * COM BASE NESSA FUNÇÃO, POPULAR A TABELA entry_credit_card E REGISTRAR O LANÇAMENTO NO VENCIMENTO CORRETO DO CARTÃO
