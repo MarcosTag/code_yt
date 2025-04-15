@@ -17,9 +17,10 @@ CREATE TABLE entry(
 
 CREATE TABLE entry_credit_card(
     id_entry_credit_card int NOT null AUTO_INCREMENT PRIMARY KEY,
-    card_name varchar(100) NOT null,
+    fk_entry_card_id int NOT null,
     fk_entry_id int NOT null,
-    FOREIGN KEY(fk_entry_id) REFERENCES entry(id)
+    FOREIGN KEY(fk_entry_id) REFERENCES entry(id),
+    FOREING KEY(fk_entry_card_id) REFERENCES credit_card(card_id)
 )
 
 /**
