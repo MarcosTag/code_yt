@@ -1,11 +1,11 @@
+<?php
+    use MF\Model\Container;
+    $entrys = Container::getModel( 'Entry' );
 
-    <?php
-        use MF\Model\Container;
-        $entrys = Container::getModel( 'Entry' );
+    $month = date('m');
+    $year = date('Y');
 
-        $month = date('m');
-        $year = date('Y');
-    ?>
+?>
 
 
 <div class="box-input" style="flex-direction: column; align-items: end; margin-bottom: 20px;">

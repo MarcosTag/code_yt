@@ -15,6 +15,15 @@ CREATE TABLE entry(
     entry_subcategory varchar(100)
 )
 
+CREATE TABLE credit_card(
+	card_id INT NOT null AUTO_INCREMENT PRIMARY KEY,
+	card_alias varchar(100) NOT null,
+	card_adm varchar(100) NOT null,
+	card_number char(4) NOT null,
+	card_flag varchar(100) NOT null,
+	card_expected_day varchar(2) NOT null
+)
+
 CREATE TABLE entry_credit_card(
     id_entry_credit_card int NOT null AUTO_INCREMENT PRIMARY KEY,
     fk_entry_card_id int NOT null,
@@ -31,3 +40,5 @@ CREATE TABLE entry_credit_card(
  * CRIAR CADASTRO DE CARTÕES PARA CRIAR DATA DE VENCIMENTO E DATA DE FECHAMENTO DE CARTÃO
  * CRIAR FUNÇÃO QUE CALCULA COM BASE NO CARTÃO SE O LANÇAMENTO ENTRARÁ NA FATURA DO MÊS ATUAL OU DO PRÓXIMO
  * COM BASE NESSA FUNÇÃO, POPULAR A TABELA entry_credit_card E REGISTRAR O LANÇAMENTO NO VENCIMENTO CORRETO DO CARTÃO
+
+ paramos em verificar se quando um lançamento num feriado ou fds é marcado como imposto ele decrementa os dias até chegar no primeiro dia útil anterior;
