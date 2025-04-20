@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use MF\Model\Model;
+use App\Models\BrAPI;
 
 class Entry extends Model {
 
@@ -46,18 +47,38 @@ class Entry extends Model {
             $this->__set( $key, $value );
         }
 
+        $brApi = new BrAPI();
+        $dateTime = new \DateTime( $this->__get( 'entry_expected_date' ) );
         $recurrence = $this->__get( 'entry_recurrence' );
         $installments = $this->__get( 'entry_qty_installments' );
-        $dateTime = new \DateTime( $this->__get( 'entry_expected_date' ) );
+        
         $id_for_entry = $this->format_id_for_entry();
 
         $parcelas = $this->calculate_installments( $this->__get( 'entry_value' ), $installments );
+        $nextWorkday = '';
         
         for ( $i = 0; $i < $installments; $i++ ) { 
 
-            // if( $this->__get( 'entry_nature' ) == 'credit' ) {
+            if( $brApi->is_rolyday( $dateTime->format( 'Y-m-d' ) ) || $brApi->is_weekend( $dateTime->format( 'Y-m-d' ) ) ) {
 
-            // }
+                $nextWorkday = new \DateTime( $dateTime->format( 'Y-m-d' ) );
+
+                while ( $brApi->is_rolyday( $nextWorkday->format( 'Y-m-d' ) ) || $brApi->is_weekend( $nextWorkday->format( 'Y-m-d' ) ) ) {
+
+                    /**
+                     * 
+                     * 
+                     * Atenção: Para a categoria Impostos, o vencimento será no dia útil anterior
+                     */
+                    if( $this->__get( 'entry_category' == 'Impostos' ) ) {
+                        $nextWorkday->modify( '-1 day' );
+                    } else {
+                        $nextWorkday->modify( '+1 day' );
+                    } 
+                    
+                }
+            
+            }
 
             $query = '
                 insert into entry( 
@@ -73,7 +94,7 @@ class Entry extends Model {
             $stmt->bindValue( ':id_for_entry', $id_for_entry );
             $stmt->bindValue( ':entry_nature', $this->__get( 'entry_nature' ) );
             $stmt->bindValue( ':entry_value', $parcelas[$i] );
-            $stmt->bindValue( ':entry_expected_date', $dateTime->format( 'Y-m-d' ) );
+            $stmt->bindValue( ':entry_expected_date', ! empty( $nextWorkday ) ? $nextWorkday->format( 'Y-m-d' ) : $dateTime->format( 'Y-m-d' ) );
             $stmt->bindValue( ':entry_type', $this->__get( 'entry_type' ) );
             $stmt->bindValue( ':entry_description', $this->__get( 'entry_description' ) );
             $stmt->bindValue( ':entry_recurrence', $this->__get( 'entry_recurrence' ) );
@@ -83,6 +104,7 @@ class Entry extends Model {
             $stmt->bindValue( ':entry_subcategory', $this->__get( 'entry_subcategory' ) );
 
             $dateTime->modify( '+1 month' );
+            if( ! empty( $nextWorkday ) ) $nextWorkday = '';
 
             try {
                 $stmt->execute();
