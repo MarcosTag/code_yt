@@ -49,34 +49,27 @@ class Entry extends Model {
 
         $brApi = new BrAPI();
         $dateTime = new \DateTime( $this->__get( 'entry_expected_date' ) );
-        $recurrence = $this->__get( 'entry_recurrence' );
+        // $recurrence = $this->__get( 'entry_recurrence' );
         $installments = $this->__get( 'entry_qty_installments' );
         
         $id_for_entry = $this->format_id_for_entry();
 
         $parcelas = $this->calculate_installments( $this->__get( 'entry_value' ), $installments );
-        $nextWorkday = '';
+        // $nextWorkday = '';
         
         for ( $i = 0; $i < $installments; $i++ ) { 
 
-            if( $brApi->is_rolyday( $dateTime->format( 'Y-m-d' ) ) || $brApi->is_weekend( $dateTime->format( 'Y-m-d' ) ) ) {
+            $expectedDate = $brApi->get_next_workday( $dateTime->format( 'Y-m-d' ) );
+            $entryMonth = new \DateTime( $brApi->get_next_workday( $dateTime->format( 'Y-m-d' ) ) );
 
-                $nextWorkday = new \DateTime( $dateTime->format( 'Y-m-d' ) );
-
-                while ( $brApi->is_rolyday( $nextWorkday->format( 'Y-m-d' ) ) || $brApi->is_weekend( $nextWorkday->format( 'Y-m-d' ) ) ) {
-
-                    /**
-                     * 
-                     * 
-                     * Atenção: Para a categoria Impostos, o vencimento será no dia útil anterior
-                     */
-                    if( $this->__get( 'entry_category' == 'Impostos' ) ) {
-                        $nextWorkday->modify( '-1 day' );
-                    } else {
-                        $nextWorkday->modify( '+1 day' );
-                    } 
-                    
-                }
+            /**
+             * 
+             * 
+             * Se um lançamento de categoria Imposto for lançado no último dia do mês, verifica se o dia é útil e decrementa o dia para o dia útil anterior a data do lançamento
+             */
+            if( $this->__get( 'entry_category' ) == 'Impostos' && ( $dateTime->format( 'Y-m-d' ) == $brApi->get_last_day_month( $dateTime->format( 'Y-m-d' ) ) || $entryMonth->format( 'm' ) != $dateTime->format( 'm' ) ) ) {
+                
+                $expectedDate = $brApi->get_last_workday_month( $dateTime->format( 'Y-m-d' ) );
             
             }
 
@@ -94,7 +87,7 @@ class Entry extends Model {
             $stmt->bindValue( ':id_for_entry', $id_for_entry );
             $stmt->bindValue( ':entry_nature', $this->__get( 'entry_nature' ) );
             $stmt->bindValue( ':entry_value', $parcelas[$i] );
-            $stmt->bindValue( ':entry_expected_date', ! empty( $nextWorkday ) ? $nextWorkday->format( 'Y-m-d' ) : $dateTime->format( 'Y-m-d' ) );
+            $stmt->bindValue( ':entry_expected_date', $expectedDate );
             $stmt->bindValue( ':entry_type', $this->__get( 'entry_type' ) );
             $stmt->bindValue( ':entry_description', $this->__get( 'entry_description' ) );
             $stmt->bindValue( ':entry_recurrence', $this->__get( 'entry_recurrence' ) );
@@ -104,7 +97,6 @@ class Entry extends Model {
             $stmt->bindValue( ':entry_subcategory', $this->__get( 'entry_subcategory' ) );
 
             $dateTime->modify( '+1 month' );
-            if( ! empty( $nextWorkday ) ) $nextWorkday = '';
 
             try {
                 $stmt->execute();
