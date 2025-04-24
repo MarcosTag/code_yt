@@ -40,5 +40,3 @@ CREATE TABLE entry_credit_card(
  * CRIAR CADASTRO DE CARTÕES PARA CRIAR DATA DE VENCIMENTO E DATA DE FECHAMENTO DE CARTÃO
  * CRIAR FUNÇÃO QUE CALCULA COM BASE NO CARTÃO SE O LANÇAMENTO ENTRARÁ NA FATURA DO MÊS ATUAL OU DO PRÓXIMO
  * COM BASE NESSA FUNÇÃO, POPULAR A TABELA entry_credit_card E REGISTRAR O LANÇAMENTO NO VENCIMENTO CORRETO DO CARTÃO
-
- paramos em verificar se quando um lançamento num feriado ou fds é marcado como imposto ele decrementa os dias até chegar no primeiro dia útil anterior;
