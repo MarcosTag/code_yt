@@ -67,9 +67,12 @@ class Entry extends Model {
              * 
              * Se um lançamento de categoria Imposto for lançado no último dia do mês, verifica se o dia é útil e decrementa o dia para o dia útil anterior a data do lançamento
              */
-            if( $this->__get( 'entry_category' ) == 'Impostos' && ( $dateTime->format( 'Y-m-d' ) == $brApi->get_last_day_month( $dateTime->format( 'Y-m-d' ) ) || $entryMonth->format( 'm' ) != $dateTime->format( 'm' ) ) ) {
-                
-                $expectedDate = $brApi->get_last_workday_month( $dateTime->format( 'Y-m-d' ) );
+            if( $this->__get( 'entry_category' ) == 'Impostos' && ( $dateTime->format( 'Y-m-d' ) == $brApi->get_last_day_month( $dateTime->format( 'Y-m-d' ) ) || $entryMonth->format( 'm' ) != $dateTime->format( 'm' ) || $brApi->get_array_date_int( $dateTime->format( 'Y-m-d' ) )['month'] != $brApi->get_array_date_int( $this->__get( 'entry_expected_date' ) )['month'] + $i ) ) {
+
+                $adjustmentDateTime = new \DateTime( $dateTime->format( 'Y-m-d' ) );
+                $adjustmentDateTime->modify( '-1 day' );
+
+                $expectedDate = $brApi->get_last_workday_month( $adjustmentDateTime->format( 'Y-m-d' ) );
             
             }
 
