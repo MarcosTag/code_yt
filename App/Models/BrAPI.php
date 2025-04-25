@@ -117,24 +117,46 @@ class BrAPI extends Curl {
      */
     public function get_last_workday_month( $date ) {
 
-        if( ! ( $this->is_rolyday( $date ) || $this->is_weekend( $date ) ) ) {
+        $lastWorkdayMonth = new \DateTime( $date );
+        $lastWorkdayMonth->modify( 'last day of this month' );
 
-            return $date;
-
-        } else {
-
-            $lastWorkdayMonth = new \DateTime( $date );
-            $lastWorkdayMonth->modify( 'last day of this month' );
-
-            while ( $this->is_rolyday( $lastWorkdayMonth->format( 'Y-m-d' ) ) || $this->is_weekend( $lastWorkdayMonth->format( 'Y-m-d' ) ) ) {
-                $lastWorkdayMonth->modify( '-1 day' );
-            }
-
-            return $lastWorkdayMonth->format( 'Y-m-d' );
-
+        while ( $this->is_rolyday( $lastWorkdayMonth->format( 'Y-m-d' ) ) || $this->is_weekend( $lastWorkdayMonth->format( 'Y-m-d' ) ) ) {
+            $lastWorkdayMonth->modify( '-1 day' );
         }
+
+        return $lastWorkdayMonth->format( 'Y-m-d' );
+
+
     }
 
+    /**
+     * 
+     * 
+     * verifica se uma data existe ou não
+     */
+    public function is_valid_date( $date ) {
+
+        $arrayDate = $this->get_array_date_int( $date );
+
+        return checkdate( $arrayDate['month'], $arrayDate['day'], $arrayDate['year'] );
+
+    }
+
+    /**
+     * 
+     * 
+     * retorna um array com formatação dos valores do tipo integer com as chaves year, month e day
+     */
+    public function get_array_date_int( $date ) {
+
+        [$year, $month, $day] = explode( '-', $date );
+
+        return $arrayDate = [
+            'year'  =>  ( int ) $year,
+            'month' =>  ( int ) $month,
+            'day'   =>  ( int ) $day,
+        ];
+    }
 }
 
 ?>
