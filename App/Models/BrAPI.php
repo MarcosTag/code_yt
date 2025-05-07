@@ -38,16 +38,15 @@ class BrAPI extends Curl {
      */
     public function is_rolyday( $date ) {
 
-        $rolyday = false;
+        //$rolyday = false;
 
-        $arrayDate = explode( '-', $date );
-
+        $arrayDate = $this->get_array_date_int( $date );
         
-        if( array_search( $date, $this->get_nations_rolydays_for_year( $arrayDate[0] ) ) ) {
-            $rolyday = true;
+        if( array_search( $date, $this->get_nations_rolydays_for_year( $arrayDate['year'] ) ) != '' ) {
+            return true;
         }
 
-        return $rolyday;
+        return false;
     }
 
     /**
@@ -77,24 +76,110 @@ class BrAPI extends Curl {
     /**
      * 
      * 
+     * retorna true caso $date não seja um weekend ou rolyday, se não, retorna false;
+     */
+    public function is_workday( $date ) {
+
+        if( gettype( $date ) == 'array' ) {
+            $date = $this->transform_array_date_int_in_string( $date );
+        }
+
+        if( $this->is_rolyday( $date ) || $this->is_weekend( $date ) ) {
+            return false;
+        }
+        
+        return true;
+    }
+
+    /**
+     * 
+     * 
+     * retorna o próximo dia
+     */
+    public function get_next_day( string $date ) {
+
+        $prevDay = new \DateTime( $date );
+        $prevDay->modify( '+1 day' );
+
+        return $prevDay->format( 'Y-m-d' );
+    }
+
+    /**
+     * 
+     * 
      * retorna o próximo dia útil de uma determinada data, caso seja feriado ou FDS, se não, retorna a mesma data
      */
     public function get_next_workday( $date ) {
 
-        if( ! ( $this->is_rolyday( $date ) || $this->is_weekend( $date ) ) ) {
-
-            return $date;
-
-        } else {
-
-            $nextWorkDay = new \DateTime( $date );
-            
-            while ( $this->is_rolyday( $nextWorkDay->format( 'Y-m-d' ) ) || $this->is_weekend( $nextWorkDay->format( 'Y-m-d' ) ) ) {
-                $nextWorkDay->modify( '+1 day' );
-            }
-
-            return $nextWorkDay->format( 'Y-m-d' );
+        if( gettype( $date ) == 'array' ) {
+            $date = $this->transform_array_date_int_in_string( $date );
         }
+
+        $nextDay = $this->get_next_day( $date );
+        
+        while ( ! $this->is_workday( $nextDay ) ) {
+           $nextDay = $this->get_prev_day( $nextDay );
+        }
+
+        return  $nextDay;
+    }
+
+    /**
+     * 
+     * 
+     * retorna o dia anterior a data
+     */
+    public function get_prev_day( $date ) {
+
+        if( gettype( $date ) == 'string' ) {
+            $date = $this->get_array_date_int( $date );
+        }
+        
+        if( $date['day'] == 1 ) {
+            $date['day'] = 31;
+
+            if( $date['month'] == 1 ) {
+                $date['month'] = 12;
+
+                $date['year'] --;
+            } else {
+                $date['month'] --;
+            }
+        } else {
+            $date['day'] --;
+        }
+
+        if( $this->is_valid_date( $date ) ) {
+            return $this->transform_array_date_int_in_string( $date );
+        } 
+
+        while ( ! $this->is_valid_date( $date ) ) {
+            $date['day'] --;
+        }
+
+        return $this->transform_array_date_int_in_string( $date );
+    }
+
+
+    /**
+     * 
+     * 
+     * retorna o próximo dia útil de uma determinada data, caso seja feriado ou FDS, se não, retorna a mesma data
+     */
+    public function get_prev_workday( $date ) {
+
+        if( gettype( $date ) == 'array' ) {
+            $date = $this->transform_array_date_int_in_string( $date );
+        }
+
+        $prevDay = $this->get_prev_day( $date );
+        
+        while ( ! $this->is_workday( $prevDay ) ) {
+           $prevDay = $this->get_prev_day( $prevDay );
+        }
+
+        return  $prevDay;
+        
     }
 
     /**
@@ -134,20 +219,58 @@ class BrAPI extends Curl {
      * 
      * verifica se uma data existe ou não
      */
-    public function is_valid_date( $date ) {
-
-        $arrayDate = $this->get_array_date_int( $date );
-
+    public function is_valid_date( array $arrayDate ) {
         return checkdate( $arrayDate['month'], $arrayDate['day'], $arrayDate['year'] );
+    }
+
+    /**
+     * 
+     * 
+     * retorna a própria data acrescida de um mês
+     */
+    public function get_next_month( $date, bool $returnArray = false ) {
+
+        if( gettype( $date ) == 'string' ) {
+            $date = $this->get_array_date_int( $date );
+        }
+
+        if( $date['month'] == 12 ) {
+            $date['month'] = 1;
+
+            $date['year'] ++;
+
+        } else {
+            $date['month'] ++;
+        }
+
+        if( ! $returnArray ) {
+
+            if( ! $this->is_valid_date( $date ) ) {
+                return $this->get_prev_day( $date );
+            }
+    
+            return $this->transform_array_date_int_in_string( $date );
+
+        } else {
+
+            if( ! $this->is_valid_date( $date ) ) {
+                return $this->get_array_date_int( $this->get_prev_day( $date ) );
+            }
+
+            return $date;
+        }
+
+        
 
     }
+
 
     /**
      * 
      * 
      * retorna um array com formatação dos valores do tipo integer com as chaves year, month e day
      */
-    public function get_array_date_int( $date ) {
+    public function get_array_date_int( string $date ) {
 
         [$year, $month, $day] = explode( '-', $date );
 
@@ -156,6 +279,23 @@ class BrAPI extends Curl {
             'month' =>  ( int ) $month,
             'day'   =>  ( int ) $day,
         ];
+    }
+
+    /**
+     * 
+     * 
+     * transforma um arrayDate em string
+     */
+    public function transform_array_date_int_in_string( array $arrayDate ) {
+
+        $arrayDate['year'] = strval( $arrayDate['year'] );
+        $arrayDate['month'] = strval( $arrayDate['month'] );
+        $arrayDate['day'] = strval( $arrayDate['day'] );
+
+        $arrayDate['day'] = strlen( $arrayDate['day'] ) < 2 ? '0' . $arrayDate['day'] : $arrayDate['day'];
+        $arrayDate['month'] = strlen( $arrayDate['month'] ) < 2 ? '0' . $arrayDate['month'] : $arrayDate['month'];
+
+        return implode( '-', $arrayDate );
     }
 }
 

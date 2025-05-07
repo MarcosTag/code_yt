@@ -48,7 +48,9 @@ class Entry extends Model {
         }
 
         $brApi = new BrAPI();
-        $dateTime = new \DateTime( $this->__get( 'entry_expected_date' ) );
+        $dateTime = $this->__get( 'entry_expected_date' );
+        $arrayDate = $brApi->get_array_date_int( $this->__get( 'entry_expected_date' ) );
+        $entryDay = $arrayDate['day'];
         // $recurrence = $this->__get( 'entry_recurrence' );
         $installments = $this->__get( 'entry_qty_installments' );
         
@@ -59,21 +61,21 @@ class Entry extends Model {
         
         for ( $i = 0; $i < $installments; $i++ ) { 
 
-            $expectedDate = $brApi->get_next_workday( $dateTime->format( 'Y-m-d' ) );
-            $entryMonth = new \DateTime( $brApi->get_next_workday( $dateTime->format( 'Y-m-d' ) ) );
+            $arrayDate['day'] = $entryDay;
+            $expectedDate = $brApi->transform_array_date_int_in_string( $arrayDate );
 
             /**
              * 
              * 
              * Se um lançamento de categoria Imposto for lançado no último dia do mês, verifica se o dia é útil e decrementa o dia para o dia útil anterior a data do lançamento
              */
-            if( $this->__get( 'entry_category' ) == 'Impostos' && ( $dateTime->format( 'Y-m-d' ) == $brApi->get_last_day_month( $dateTime->format( 'Y-m-d' ) ) || $entryMonth->format( 'm' ) != $dateTime->format( 'm' ) || $brApi->get_array_date_int( $dateTime->format( 'Y-m-d' ) )['month'] != $brApi->get_array_date_int( $this->__get( 'entry_expected_date' ) )['month'] + $i ) ) {
+            if( $this->__get( 'entry_category' ) == 'Impostos' ) {
 
-                $adjustmentDateTime = new \DateTime( $dateTime->format( 'Y-m-d' ) );
-                $adjustmentDateTime->modify( '-1 day' );
-
-                $expectedDate = $brApi->get_last_workday_month( $adjustmentDateTime->format( 'Y-m-d' ) );
-            
+                if( ! $brApi->is_workday( $arrayDate ) || ! $brApi->is_valid_date( $arrayDate ) ) {
+                    $expectedDate = $brApi->get_prev_workday( $arrayDate );
+                } else {
+                    $expectedDate = $brApi->transform_array_date_int_in_string( $arrayDate );
+                }
             }
 
             $query = '
@@ -99,7 +101,7 @@ class Entry extends Model {
             $stmt->bindValue( ':entry_category', $this->__get( 'entry_category' ) );
             $stmt->bindValue( ':entry_subcategory', $this->__get( 'entry_subcategory' ) );
 
-            $dateTime->modify( '+1 month' );
+            $arrayDate = $brApi->get_next_month( $arrayDate, true );
 
             try {
                 $stmt->execute();
@@ -113,6 +115,36 @@ class Entry extends Model {
         }
 
         return $this;
+
+    }
+
+    public function get_entry_by_id( $id ) {
+
+        $query = '
+            select
+                entry_value, entry_nature, entry_expected_date, entry_type, entry_description, entry_recurrence, entry_qty_installments, entry_effected, entry_category, entry_subcategory
+            from
+                entry
+            where
+                id = :id
+        ';
+
+        $stmt = $this->db->prepare( $query );
+
+        $stmt->bindValue( ':id', $id );
+
+        try {
+
+            $stmt->execute();
+            $entry = $stmt->fetch( \PDO::FETCH_ASSOC );
+            return $entry;
+
+        } catch ( \Throwable $th ) {
+
+            echo '<pre>';
+            print_r( $th );
+            echo '</pre>';
+        }
 
     }
     
@@ -150,6 +182,36 @@ class Entry extends Model {
             echo '</pre>';
 
         }
+    }
+
+    public function get_entry_recurrence_by_id( $id ) {
+
+        $query = '
+            select
+                entry_recurrence
+            from 
+                entry
+            where
+                id = :id
+        ';
+
+        $stmt = $this->db->prepare( $query );
+
+        $stmt->bindValue( ':id', $id );
+
+        try {
+
+            $stmt->execute();
+            $recurrence = $stmt->fetch( \PDO::FETCH_ASSOC )['entry_recurrence'];
+            return $recurrence;
+
+        } catch ( \Throwable $th ) {
+
+            echo '<pre>';
+            print_r( $th );
+            echo '</pre>';
+        }
+
     }
 
     /**
@@ -365,6 +427,16 @@ class Entry extends Model {
      * atualiza a coluna de lançamento efetivado
      */
     public function update_entry_effected( $dataUpdate, $idEntry ) {
+
+        if( $this->get_entry_recurrence_by_id( $idEntry ) == 'fixed' && $dataUpdate == 1 ) {
+
+            $brApi = new BrAPI();
+
+            $entry = $this->get_entry_by_id( $idEntry );
+            $entry['entry_expected_date'] = $brApi->get_next_month( $entry['entry_expected_date'] );
+            
+            $this->entry_save( $entry );
+        }
 
         $query = '
             update
