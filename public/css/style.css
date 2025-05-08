@@ -153,12 +153,21 @@ h2.section-title > span {
   transition: 0.3s;
 }
 
+.flex-entrys-content {
+  display: flex;
+}
+
+.day-line:not(:first-of-type) {
+  margin-top: 5px;
+}
+
 .rotate-180deg {
   rotate: -180deg;
 }
 
 .section-title.accordeon-open:not(:first-of-type) {
   margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 #form-entry/*,
@@ -274,8 +283,6 @@ label.input-legend {
 }
 
 #display-entry-sumary {
-  margin-top: 20px;
-
   .box-toggle label.input-legend {
     color: inherit;
   }
