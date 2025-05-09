@@ -157,7 +157,7 @@ class Entry extends Model {
 
         $query = '
             select 
-                id,  id_for_entry, entry_value, entry_nature, DATE_FORMAT(entry_expected_date, "%d/%m/%Y") as entry_expected_date, entry_type, entry_description, entry_recurrence, entry_qty_installments, entry_effected, entry_category, entry_subcategory
+                id,  id_for_entry, entry_value, entry_nature, entry_expected_date, entry_type, entry_description, entry_recurrence, entry_qty_installments, entry_effected, entry_category, entry_subcategory
             from
                 entry
             where
@@ -598,6 +598,8 @@ class Entry extends Model {
 
     public function get_format_display_entry_sumary( $month, $year ) {
 
+        $brApi = new BrAPI();
+
         $entrys = $this->get_entrys_for_month( $month, $year );
         $daysWithEntry = $this->get_days_with_entry_per_month( $month, $year );
         $i = 0;
@@ -606,309 +608,315 @@ class Entry extends Model {
     
         <div id="display-entry-sumary">
 
-            <div class="day-line">
+            <div class="day-line-box">
+
+                <div class="entry-box-for-day">
         
-            <?php foreach( $entrys as $key => $entry ) : ?>
+                <?php foreach( $entrys as $key => $entry ) : ?>
 
-                <?php 
-                
-                if( $entry['entry_expected_date'] == $daysWithEntry[$i] ) {
-
-                    ?>
-
-                    <div class="card-sumary <?php echo $entry['entry_nature'] == 'expense' ? 'expense' : 'revenue' ?> <?php echo $entry['entry_recurrence'] == 'installment' ? 'installment' : '' ?>" id="entry-card-<?php  echo $entry['id']; ?>">
-                
-                        <div class="icon-card">
-                            <?php echo $entry['entry_nature'] == 'expense' ? '<i class="fa-solid fa-arrow-trend-down"></i>' : '<i class="fa-solid fa-arrow-trend-up"></i>' ?>
-                        </div>
-            
-                        <div class="box-input box-toggle">
-                            <input type="checkbox" name="entry_id" class="effected-yes" id="entry-<?php echo $entry['id']; ?>" value="1" hidden <?php echo $entry['entry_effected']; ?> <?php echo $entry['entry_effected'] != '0' ? 'checked' : ''; ?>>
-                            <label for="entry-<?php echo $entry['id']; ?>" class="input-legend event-key-toggle" id="" tabindex="0">
-                                <?php echo $entry['entry_expected_date'] ?>
-                                <div class="input-toggle"></div>
-                            </label>
-                        </div>
-            
-                        <div class="content-card-sumary">
-                            <div class="arrown-one">
-                                <h3 class="entry-name"><?php echo $entry['entry_description'] ?></h3>
-                                <a href="" class="edit-entry">
-                                    <span class="btn-icon">
-                                        <i class="fas fa-pencil-alt"></i>
-                                    </span>
-                                </a>
-                                
-                            </div>
+                    <?php 
                     
-                            <div class="arrown-two">
-                                <?php echo $this->format_entry_recurrence( $entry['entry_recurrence'] ); ?>
-            
-                                <?php if( $entry['entry_recurrence'] == 'installment' ) { ?>
-                                    - <?php echo $this->get_installment_for_month( $month, $entry['id_for_entry'] ); ?> / <?php echo $entry['entry_qty_installments'] . ' ( '. $this->sum_values_entry_installments( $entry['id_for_entry'] ) .' )' ?>
-                                <?php } ?>
-            
-                            </div>
+                    if( $entry['entry_expected_date'] == $daysWithEntry[$i] ) { ?>
+
+                        <!-- card-sumary começa aqui -->
+                        <div class="card-sumary <?php echo $entry['entry_nature'] == 'expense' ? 'expense' : 'revenue' ?> <?php echo $entry['entry_recurrence'] == 'installment' ? 'installment' : '' ?>" id="entry-card-<?php  echo $entry['id']; ?>">
                     
-                            <div class="arrown-tree">
-                                <div class="entry-tags">
-                                    <span class="entry-price"><?php echo $this->format_entry_value( $entry['entry_value'] ); ?></span>
-                                    <span class="entry-category btn-icon"><i class="fa-brands fa-cc-mastercard"></i></i><?php echo $entry['entry_category']; ?></span>
+                            <div class="icon-card">
+                                <?php echo $entry['entry_nature'] == 'expense' ? '<i class="fa-solid fa-arrow-trend-down"></i>' : '<i class="fa-solid fa-arrow-trend-up"></i>' ?>
+                            </div>
+                
+                            <div class="box-input box-toggle">
+                                <input type="checkbox" name="entry_id" class="effected-yes" id="entry-<?php echo $entry['id']; ?>" value="1" hidden <?php echo $entry['entry_effected']; ?> <?php echo $entry['entry_effected'] != '0' ? 'checked' : ''; ?>>
+                                <label for="entry-<?php echo $entry['id']; ?>" class="input-legend event-key-toggle" id="" tabindex="0">
+                                    <?php echo $entry['entry_expected_date'] ?>
+                                    <div class="input-toggle"></div>
+                                </label>
+                            </div>
+                
+                            <div class="content-card-sumary">
+                                <div class="arrown-one">
+                                    <h3 class="entry-name"><?php echo $entry['entry_description'] ?></h3>
+                                    <a href="" class="edit-entry">
+                                        <span class="btn-icon">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </span>
+                                    </a>
+                                    
                                 </div>
-                                <a href="" class="remove-entry" id="remove-entry-<?php echo $entry['id']; ?>">
-                                    <span class="btn-icon">
-                                        <i class="fa-solid fa-trash-can"></i>
-                                    </span>
-                                </a>
-                            </div>
-                        </div>
-            
-                        <form action="edit_entry" method="post" class="form-edity-entry" id="form-edity-entry">
-                            <fieldset class="input-legend">
-                                <legend class="input-legend">Natureza</legend>
-            
-                                <div class="box-input">
-                                    <input type="radio" name="edit_entry_nature" id="edit_entry_nature-expense-<?php echo $entry['id']?>" value="expense" <?php echo $entry['entry_nature'] == 'expense' ? 'checked' : '' ; ?>>
-                                    <label for="edit_entry_nature-expense-<?php echo $entry['id']?>">Despesa</label>
+                        
+                                <div class="arrown-two">
+                                    <?php echo $this->format_entry_recurrence( $entry['entry_recurrence'] ); ?>
+                
+                                    <?php if( $entry['entry_recurrence'] == 'installment' ) { ?>
+                                        - <?php echo $this->get_installment_for_month( $month, $entry['id_for_entry'] ); ?> / <?php echo $entry['entry_qty_installments'] . ' ( '. $this->sum_values_entry_installments( $entry['id_for_entry'] ) .' )' ?>
+                                    <?php } ?>
+                
                                 </div>
-            
-                                <div class="box-input">
-                                    <input type="radio" name="edit_entry_nature" id="edit_entry_nature-revenue-<?php echo $entry['id']?>" value="revenue" <?php echo $entry['entry_nature'] == 'revenue' ? 'checked' : '' ; ?>>
-                                    <label for="edit_entry_nature-revenue-<?php echo $entry['id']?>">Receita</label>
-                                </div>
-                                
-                            </fieldset>
-            
-                            <div class="box-input label-row">
-                                <label for="edit_entry_value_<?php echo $entry['id']; ?>" class="input-legend">Valor</label>
-                                <input type="tel" name="edit_entry_value" id="edit_entry_value_<?php echo $entry['id']; ?>" class="input-entry-value" step=".01" placeholder="0,00" <?php echo isset( $entry['entry_value'] ) ? 'value="' . str_replace( '.', ',', $entry['entry_value'] ) . '"' : '' ; ?>>
-                            </div>
-            
-                            <div class="box-input label-row">
-                                <label for="edit_entry_expected_date-<?php echo $entry['id']?>" class="input-legend">Data de lançamento</label>
-                                <input type="date" name="edit_entry_expected_date" id="edit_entry_expected_date-<?php echo $entry['id']?>" <?php echo isset( $entry['entry_expected_date'] ) ? 'value="' . $this->get_entry_expected_date_html_for_id( $entry['id'] ) . '"' : '' ?>>
-                                
-                            </div>
-            
-                            <fieldset class="input-legend">
-                                <legend class="input-legend">Tipo</legend>
-            
-                                <div class="box-input">
-                                    <input type="radio" name="edit_entry_type" id="account-<?php echo $entry['id']?>" value="account" <?php echo $entry['entry_type'] == 'account' ? 'checked' : '' ; ?>>
-                                    <label for="account-<?php echo $entry['id']?>">Conta corrente</label>    
-                                </div>        
-            
-                                <div class="box-input">
-                                    <input type="radio" name="edit_entry_type" id="credit-<?php echo $entry['id']?>" value="credit" <?php echo $entry['entry_type'] == 'credit' ? 'checked' : '' ; ?>>
-                                    <label for="credit-<?php echo $entry['id']?>">Crédito</label>                
-                                </div>        
-            
-                            </fieldset>
-            
-                            <div class="box-input label-row">
-                                <label for="edit_entry_description-<?php echo $entry['id']?>" class="input-legend">Descrição da despesa</label>
-                                <textarea name="edit_entry_description" id="edit_entry_description-<?php echo $entry['id']?>"><?php echo isset( $entry['entry_description'] ) ? $entry['entry_description'] : '' ?></textarea>
-                            </div>
-                            
-                            <fieldset class="input-legend">
-                                <legend class="input-legend">Recorrencia</legend>
-            
-                                <div class="box-input">
-                                    <input type="radio" name="edit_entry_recurrence" id="edit_no_recurrence-<?php echo $entry['id']; ?>" value="no_recurrence" <?php echo $entry['entry_recurrence'] == 'no_recurrence' ? 'checked' : '' ; ?>>
-                                    <label for="edit_no_recurrence-<?php echo $entry['id']; ?>">Sem recorrência</label>
-                                </div>        
-            
-                                <div class="box-input">
-                                    <input type="radio" name="edit_entry_recurrence" id="edit_installment-<?php echo $entry['id']; ?>" class="installment-recurrence" value="installment" <?php echo $entry['entry_recurrence'] == 'installment' ? 'checked' : '' ; ?>>
-                                    <label for="edit_installment-<?php echo $entry['id']; ?>">Parcelar</label>            
-                                </div>        
-            
-                                <div class="box-input">
-                                    <input type="radio" name="edit_entry_recurrence" id="edit_fixed-<?php echo $entry['id']; ?>" value="fixed" <?php echo $entry['entry_recurrence'] == 'fixed' ? 'checked' : '' ; ?>>
-                                    <label for="edit_fixed-<?php echo $entry['id']; ?>">Fixa</label>            
-                                </div>        
-                            </fieldset>
-            
-                            <?php 
-                                if( $entry['entry_recurrence'] == 'installment' ) { ?>
-                                    <div id="installments-<?php echo $entry['entry_recurrence']; ?>" class="box-input label-row installments-toggle">
-                                        <label for="edit_entry_qty_installments" class="input-legend">Quantidade de parcelas</label>
-                                        <input type="number" name="edit_entry_qty_installments" id="edit_entry_qty_installments" value="<?php echo $entry['entry_qty_installments']?>">
+                        
+                                <div class="arrown-tree">
+                                    <div class="entry-tags">
+                                        <span class="entry-price"><?php echo $this->format_entry_value( $entry['entry_value'] ); ?></span>
+                                        <span class="entry-category btn-icon"><i class="fa-brands fa-cc-mastercard"></i></i><?php echo $entry['entry_category']; ?></span>
                                     </div>
-                                <?php }
-                            ?>
-                                
-                            <div class="box-input label-row">
-                                <label for="edit_entry_category-<?php echo $entry['id']?>" class="input-legend">Categoria</label>
-                                <input type="text" name="edit_entry_category" id="edit_entry_category-<?php echo $entry['id']?>" <?php echo isset( $entry['entry_category'] ) ? 'value="' . $entry['entry_category'] . '"' : '' ?>>
+                                    <a href="" class="remove-entry" id="remove-entry-<?php echo $entry['id']; ?>">
+                                        <span class="btn-icon">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </span>
+                                    </a>
+                                </div>
                             </div>
-                            
-                            <div class="box-input label-row">
-                                <label for="edit_entry_subcategory-<?php echo $entry['id']?>" class="input-legend">Subcategoria</label>
-                                <input type="text" name="edit_entry_subcategory" id="edit_entry_subcategory-<?php echo $entry['id']?>" <?php echo isset( $entry['entry_subcategory'] ) ? 'value="' . $entry['entry_subcategory'] . '"' : '' ?>>
-                            </div>
-            
-                            <input type="hidden" name="entry_id" value="<?php echo $entry['id']; ?>">
-                            
-                            <button type="submit" class="btn btn-primary">Alterar</button>
-                        </form>
-        
-                    </div>
-
-                    <?php
-                    continue;
-                } else {
-                    echo '</div>';
-                    echo '<div class="day-line">';
-
-                    ?>
-
-                    <div class="card-sumary <?php echo $entry['entry_nature'] == 'expense' ? 'expense' : 'revenue' ?> <?php echo $entry['entry_recurrence'] == 'installment' ? 'installment' : '' ?>" id="entry-card-<?php  echo $entry['id']; ?>">
                 
-                        <div class="icon-card">
-                            <?php echo $entry['entry_nature'] == 'expense' ? '<i class="fa-solid fa-arrow-trend-down"></i>' : '<i class="fa-solid fa-arrow-trend-up"></i>' ?>
-                        </div>
-            
-                        <div class="box-input box-toggle">
-                            <input type="checkbox" name="entry_id" class="effected-yes" id="entry-<?php echo $entry['id']; ?>" value="1" hidden <?php echo $entry['entry_effected']; ?> <?php echo $entry['entry_effected'] != '0' ? 'checked' : ''; ?>>
-                            <label for="entry-<?php echo $entry['id']; ?>" class="input-legend event-key-toggle" id="" tabindex="0">
-                                <?php echo $entry['entry_expected_date'] ?>
-                                <div class="input-toggle"></div>
-                            </label>
-                        </div>
-            
-                        <div class="content-card-sumary">
-                            <div class="arrown-one">
-                                <h3 class="entry-name"><?php echo $entry['entry_description'] ?></h3>
-                                <a href="" class="edit-entry">
-                                    <span class="btn-icon">
-                                        <i class="fas fa-pencil-alt"></i>
-                                    </span>
-                                </a>
-                                
-                            </div>
-                    
-                            <div class="arrown-two">
-                                <?php echo $this->format_entry_recurrence( $entry['entry_recurrence'] ); ?>
-            
-                                <?php if( $entry['entry_recurrence'] == 'installment' ) { ?>
-                                    - <?php echo $this->get_installment_for_month( $month, $entry['id_for_entry'] ); ?> / <?php echo $entry['entry_qty_installments'] . ' ( '. $this->sum_values_entry_installments( $entry['id_for_entry'] ) .' )' ?>
-                                <?php } ?>
-            
-                            </div>
-                    
-                            <div class="arrown-tree">
-                                <div class="entry-tags">
-                                    <span class="entry-price"><?php echo $this->format_entry_value( $entry['entry_value'] ); ?></span>
-                                    <span class="entry-category btn-icon"><i class="fa-brands fa-cc-mastercard"></i></i><?php echo $entry['entry_category']; ?></span>
-                                </div>
-                                <a href="" class="remove-entry" id="remove-entry-<?php echo $entry['id']; ?>">
-                                    <span class="btn-icon">
-                                        <i class="fa-solid fa-trash-can"></i>
-                                    </span>
-                                </a>
-                            </div>
-                        </div>
-            
-                        <form action="edit_entry" method="post" class="form-edity-entry" id="form-edity-entry">
-                            <fieldset class="input-legend">
-                                <legend class="input-legend">Natureza</legend>
-            
-                                <div class="box-input">
-                                    <input type="radio" name="edit_entry_nature" id="edit_entry_nature-expense-<?php echo $entry['id']?>" value="expense" <?php echo $entry['entry_nature'] == 'expense' ? 'checked' : '' ; ?>>
-                                    <label for="edit_entry_nature-expense-<?php echo $entry['id']?>">Despesa</label>
-                                </div>
-            
-                                <div class="box-input">
-                                    <input type="radio" name="edit_entry_nature" id="edit_entry_nature-revenue-<?php echo $entry['id']?>" value="revenue" <?php echo $entry['entry_nature'] == 'revenue' ? 'checked' : '' ; ?>>
-                                    <label for="edit_entry_nature-revenue-<?php echo $entry['id']?>">Receita</label>
-                                </div>
-                                
-                            </fieldset>
-            
-                            <div class="box-input label-row">
-                                <label for="edit_entry_value_<?php echo $entry['id']; ?>" class="input-legend">Valor</label>
-                                <input type="tel" name="edit_entry_value" id="edit_entry_value_<?php echo $entry['id']; ?>" class="input-entry-value" step=".01" placeholder="0,00" <?php echo isset( $entry['entry_value'] ) ? 'value="' . str_replace( '.', ',', $entry['entry_value'] ) . '"' : '' ; ?>>
-                            </div>
-            
-                            <div class="box-input label-row">
-                                <label for="edit_entry_expected_date-<?php echo $entry['id']?>" class="input-legend">Data de lançamento</label>
-                                <input type="date" name="edit_entry_expected_date" id="edit_entry_expected_date-<?php echo $entry['id']?>" <?php echo isset( $entry['entry_expected_date'] ) ? 'value="' . $this->get_entry_expected_date_html_for_id( $entry['id'] ) . '"' : '' ?>>
-                                
-                            </div>
-            
-                            <fieldset class="input-legend">
-                                <legend class="input-legend">Tipo</legend>
-            
-                                <div class="box-input">
-                                    <input type="radio" name="edit_entry_type" id="account-<?php echo $entry['id']?>" value="account" <?php echo $entry['entry_type'] == 'account' ? 'checked' : '' ; ?>>
-                                    <label for="account-<?php echo $entry['id']?>">Conta corrente</label>    
-                                </div>        
-            
-                                <div class="box-input">
-                                    <input type="radio" name="edit_entry_type" id="credit-<?php echo $entry['id']?>" value="credit" <?php echo $entry['entry_type'] == 'credit' ? 'checked' : '' ; ?>>
-                                    <label for="credit-<?php echo $entry['id']?>">Crédito</label>                
-                                </div>        
-            
-                            </fieldset>
-            
-                            <div class="box-input label-row">
-                                <label for="edit_entry_description-<?php echo $entry['id']?>" class="input-legend">Descrição da despesa</label>
-                                <textarea name="edit_entry_description" id="edit_entry_description-<?php echo $entry['id']?>"><?php echo isset( $entry['entry_description'] ) ? $entry['entry_description'] : '' ?></textarea>
-                            </div>
-                            
-                            <fieldset class="input-legend">
-                                <legend class="input-legend">Recorrencia</legend>
-            
-                                <div class="box-input">
-                                    <input type="radio" name="edit_entry_recurrence" id="edit_no_recurrence-<?php echo $entry['id']; ?>" value="no_recurrence" <?php echo $entry['entry_recurrence'] == 'no_recurrence' ? 'checked' : '' ; ?>>
-                                    <label for="edit_no_recurrence-<?php echo $entry['id']; ?>">Sem recorrência</label>
-                                </div>        
-            
-                                <div class="box-input">
-                                    <input type="radio" name="edit_entry_recurrence" id="edit_installment-<?php echo $entry['id']; ?>" class="installment-recurrence" value="installment" <?php echo $entry['entry_recurrence'] == 'installment' ? 'checked' : '' ; ?>>
-                                    <label for="edit_installment-<?php echo $entry['id']; ?>">Parcelar</label>            
-                                </div>        
-            
-                                <div class="box-input">
-                                    <input type="radio" name="edit_entry_recurrence" id="edit_fixed-<?php echo $entry['id']; ?>" value="fixed" <?php echo $entry['entry_recurrence'] == 'fixed' ? 'checked' : '' ; ?>>
-                                    <label for="edit_fixed-<?php echo $entry['id']; ?>">Fixa</label>            
-                                </div>        
-                            </fieldset>
-            
-                            <?php 
-                                if( $entry['entry_recurrence'] == 'installment' ) { ?>
-                                    <div id="installments-<?php echo $entry['entry_recurrence']; ?>" class="box-input label-row installments-toggle">
-                                        <label for="edit_entry_qty_installments" class="input-legend">Quantidade de parcelas</label>
-                                        <input type="number" name="edit_entry_qty_installments" id="edit_entry_qty_installments" value="<?php echo $entry['entry_qty_installments']?>">
+                            <form action="edit_entry" method="post" class="form-edity-entry" id="form-edity-entry">
+                                <fieldset class="input-legend">
+                                    <legend class="input-legend">Natureza</legend>
+                
+                                    <div class="box-input">
+                                        <input type="radio" name="edit_entry_nature" id="edit_entry_nature-expense-<?php echo $entry['id']?>" value="expense" <?php echo $entry['entry_nature'] == 'expense' ? 'checked' : '' ; ?>>
+                                        <label for="edit_entry_nature-expense-<?php echo $entry['id']?>">Despesa</label>
                                     </div>
-                                <?php }
-                            ?>
-                                
-                            <div class="box-input label-row">
-                                <label for="edit_entry_category-<?php echo $entry['id']?>" class="input-legend">Categoria</label>
-                                <input type="text" name="edit_entry_category" id="edit_entry_category-<?php echo $entry['id']?>" <?php echo isset( $entry['entry_category'] ) ? 'value="' . $entry['entry_category'] . '"' : '' ?>>
-                            </div>
-                            
-                            <div class="box-input label-row">
-                                <label for="edit_entry_subcategory-<?php echo $entry['id']?>" class="input-legend">Subcategoria</label>
-                                <input type="text" name="edit_entry_subcategory" id="edit_entry_subcategory-<?php echo $entry['id']?>" <?php echo isset( $entry['entry_subcategory'] ) ? 'value="' . $entry['entry_subcategory'] . '"' : '' ?>>
-                            </div>
-            
-                            <input type="hidden" name="entry_id" value="<?php echo $entry['id']; ?>">
-                            
-                            <button type="submit" class="btn btn-primary">Alterar</button>
-                        </form>
-        
-                    </div>
-
-                    <?php
-                    $i++;
-                }
                 
-                ?>
-        
-            <?php endforeach; ?>
+                                    <div class="box-input">
+                                        <input type="radio" name="edit_entry_nature" id="edit_entry_nature-revenue-<?php echo $entry['id']?>" value="revenue" <?php echo $entry['entry_nature'] == 'revenue' ? 'checked' : '' ; ?>>
+                                        <label for="edit_entry_nature-revenue-<?php echo $entry['id']?>">Receita</label>
+                                    </div>
+                                    
+                                </fieldset>
+                
+                                <div class="box-input label-row">
+                                    <label for="edit_entry_value_<?php echo $entry['id']; ?>" class="input-legend">Valor</label>
+                                    <input type="tel" name="edit_entry_value" id="edit_entry_value_<?php echo $entry['id']; ?>" class="input-entry-value" step=".01" placeholder="0,00" <?php echo isset( $entry['entry_value'] ) ? 'value="' . str_replace( '.', ',', $entry['entry_value'] ) . '"' : '' ; ?>>
+                                </div>
+                
+                                <div class="box-input label-row">
+                                    <label for="edit_entry_expected_date-<?php echo $entry['id']?>" class="input-legend">Data de lançamento</label>
+                                    <input type="date" name="edit_entry_expected_date" id="edit_entry_expected_date-<?php echo $entry['id']?>" <?php echo isset( $entry['entry_expected_date'] ) ? 'value="' . $this->get_entry_expected_date_html_for_id( $entry['id'] ) . '"' : '' ?>>
+                                    
+                                </div>
+                
+                                <fieldset class="input-legend">
+                                    <legend class="input-legend">Tipo</legend>
+                
+                                    <div class="box-input">
+                                        <input type="radio" name="edit_entry_type" id="account-<?php echo $entry['id']?>" value="account" <?php echo $entry['entry_type'] == 'account' ? 'checked' : '' ; ?>>
+                                        <label for="account-<?php echo $entry['id']?>">Conta corrente</label>    
+                                    </div>        
+                
+                                    <div class="box-input">
+                                        <input type="radio" name="edit_entry_type" id="credit-<?php echo $entry['id']?>" value="credit" <?php echo $entry['entry_type'] == 'credit' ? 'checked' : '' ; ?>>
+                                        <label for="credit-<?php echo $entry['id']?>">Crédito</label>                
+                                    </div>        
+                
+                                </fieldset>
+                
+                                <div class="box-input label-row">
+                                    <label for="edit_entry_description-<?php echo $entry['id']?>" class="input-legend">Descrição da despesa</label>
+                                    <textarea name="edit_entry_description" id="edit_entry_description-<?php echo $entry['id']?>"><?php echo isset( $entry['entry_description'] ) ? $entry['entry_description'] : '' ?></textarea>
+                                </div>
+                                
+                                <fieldset class="input-legend">
+                                    <legend class="input-legend">Recorrencia</legend>
+                
+                                    <div class="box-input">
+                                        <input type="radio" name="edit_entry_recurrence" id="edit_no_recurrence-<?php echo $entry['id']; ?>" value="no_recurrence" <?php echo $entry['entry_recurrence'] == 'no_recurrence' ? 'checked' : '' ; ?>>
+                                        <label for="edit_no_recurrence-<?php echo $entry['id']; ?>">Sem recorrência</label>
+                                    </div>        
+                
+                                    <div class="box-input">
+                                        <input type="radio" name="edit_entry_recurrence" id="edit_installment-<?php echo $entry['id']; ?>" class="installment-recurrence" value="installment" <?php echo $entry['entry_recurrence'] == 'installment' ? 'checked' : '' ; ?>>
+                                        <label for="edit_installment-<?php echo $entry['id']; ?>">Parcelar</label>            
+                                    </div>        
+                
+                                    <div class="box-input">
+                                        <input type="radio" name="edit_entry_recurrence" id="edit_fixed-<?php echo $entry['id']; ?>" value="fixed" <?php echo $entry['entry_recurrence'] == 'fixed' ? 'checked' : '' ; ?>>
+                                        <label for="edit_fixed-<?php echo $entry['id']; ?>">Fixa</label>            
+                                    </div>        
+                                </fieldset>
+                
+                                <?php 
+                                    if( $entry['entry_recurrence'] == 'installment' ) { ?>
+                                        <div id="installments-<?php echo $entry['entry_recurrence']; ?>" class="box-input label-row installments-toggle">
+                                            <label for="edit_entry_qty_installments" class="input-legend">Quantidade de parcelas</label>
+                                            <input type="number" name="edit_entry_qty_installments" id="edit_entry_qty_installments" value="<?php echo $entry['entry_qty_installments']?>">
+                                        </div>
+                                    <?php }
+                                ?>
+                                    
+                                <div class="box-input label-row">
+                                    <label for="edit_entry_category-<?php echo $entry['id']?>" class="input-legend">Categoria</label>
+                                    <input type="text" name="edit_entry_category" id="edit_entry_category-<?php echo $entry['id']?>" <?php echo isset( $entry['entry_category'] ) ? 'value="' . $entry['entry_category'] . '"' : '' ?>>
+                                </div>
+                                
+                                <div class="box-input label-row">
+                                    <label for="edit_entry_subcategory-<?php echo $entry['id']?>" class="input-legend">Subcategoria</label>
+                                    <input type="text" name="edit_entry_subcategory" id="edit_entry_subcategory-<?php echo $entry['id']?>" <?php echo isset( $entry['entry_subcategory'] ) ? 'value="' . $entry['entry_subcategory'] . '"' : '' ?>>
+                                </div>
+                
+                                <input type="hidden" name="entry_id" value="<?php echo $entry['id']; ?>">
+                                
+                                <button type="submit" class="btn btn-primary">Alterar</button>
+                            </form>
+            
+                        </div>
+
+                        <?php
+                        continue;
+                    } else { ?>
+                        </div>
+                        <div class="day-line-main"><?php print_r( $brApi->get_array_date_int( $daysWithEntry[$i] )['day'] ); ?></div>
+                        </div>
+                        <div class="day-line-box">
+                            <div class="entry-box-for-day">
+
+                            <!-- card-sumary começa aqui -->
+                            <div class="card-sumary <?php echo $entry['entry_nature'] == 'expense' ? 'expense' : 'revenue' ?> <?php echo $entry['entry_recurrence'] == 'installment' ? 'installment' : '' ?>" id="entry-card-<?php  echo $entry['id']; ?>">
+                    
+                            <div class="icon-card">
+                                <?php echo $entry['entry_nature'] == 'expense' ? '<i class="fa-solid fa-arrow-trend-down"></i>' : '<i class="fa-solid fa-arrow-trend-up"></i>' ?>
+                            </div>
+                
+                            <div class="box-input box-toggle">
+                                <input type="checkbox" name="entry_id" class="effected-yes" id="entry-<?php echo $entry['id']; ?>" value="1" hidden <?php echo $entry['entry_effected']; ?> <?php echo $entry['entry_effected'] != '0' ? 'checked' : ''; ?>>
+                                <label for="entry-<?php echo $entry['id']; ?>" class="input-legend event-key-toggle" id="" tabindex="0">
+                                    <?php echo $entry['entry_expected_date'] ?>
+                                    <div class="input-toggle"></div>
+                                </label>
+                            </div>
+                
+                            <div class="content-card-sumary">
+                                <div class="arrown-one">
+                                    <h3 class="entry-name"><?php echo $entry['entry_description'] ?></h3>
+                                    <a href="" class="edit-entry">
+                                        <span class="btn-icon">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </span>
+                                    </a>
+                                    
+                                </div>
+                        
+                                <div class="arrown-two">
+                                    <?php echo $this->format_entry_recurrence( $entry['entry_recurrence'] ); ?>
+                
+                                    <?php if( $entry['entry_recurrence'] == 'installment' ) { ?>
+                                        - <?php echo $this->get_installment_for_month( $month, $entry['id_for_entry'] ); ?> / <?php echo $entry['entry_qty_installments'] . ' ( '. $this->sum_values_entry_installments( $entry['id_for_entry'] ) .' )' ?>
+                                    <?php } ?>
+                
+                                </div>
+                        
+                                <div class="arrown-tree">
+                                    <div class="entry-tags">
+                                        <span class="entry-price"><?php echo $this->format_entry_value( $entry['entry_value'] ); ?></span>
+                                        <span class="entry-category btn-icon"><i class="fa-brands fa-cc-mastercard"></i></i><?php echo $entry['entry_category']; ?></span>
+                                    </div>
+                                    <a href="" class="remove-entry" id="remove-entry-<?php echo $entry['id']; ?>">
+                                        <span class="btn-icon">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </span>
+                                    </a>
+                                </div>
+                            </div>
+                
+                            <form action="edit_entry" method="post" class="form-edity-entry" id="form-edity-entry">
+                                <fieldset class="input-legend">
+                                    <legend class="input-legend">Natureza</legend>
+                
+                                    <div class="box-input">
+                                        <input type="radio" name="edit_entry_nature" id="edit_entry_nature-expense-<?php echo $entry['id']?>" value="expense" <?php echo $entry['entry_nature'] == 'expense' ? 'checked' : '' ; ?>>
+                                        <label for="edit_entry_nature-expense-<?php echo $entry['id']?>">Despesa</label>
+                                    </div>
+                
+                                    <div class="box-input">
+                                        <input type="radio" name="edit_entry_nature" id="edit_entry_nature-revenue-<?php echo $entry['id']?>" value="revenue" <?php echo $entry['entry_nature'] == 'revenue' ? 'checked' : '' ; ?>>
+                                        <label for="edit_entry_nature-revenue-<?php echo $entry['id']?>">Receita</label>
+                                    </div>
+                                    
+                                </fieldset>
+                
+                                <div class="box-input label-row">
+                                    <label for="edit_entry_value_<?php echo $entry['id']; ?>" class="input-legend">Valor</label>
+                                    <input type="tel" name="edit_entry_value" id="edit_entry_value_<?php echo $entry['id']; ?>" class="input-entry-value" step=".01" placeholder="0,00" <?php echo isset( $entry['entry_value'] ) ? 'value="' . str_replace( '.', ',', $entry['entry_value'] ) . '"' : '' ; ?>>
+                                </div>
+                
+                                <div class="box-input label-row">
+                                    <label for="edit_entry_expected_date-<?php echo $entry['id']?>" class="input-legend">Data de lançamento</label>
+                                    <input type="date" name="edit_entry_expected_date" id="edit_entry_expected_date-<?php echo $entry['id']?>" <?php echo isset( $entry['entry_expected_date'] ) ? 'value="' . $this->get_entry_expected_date_html_for_id( $entry['id'] ) . '"' : '' ?>>
+                                    
+                                </div>
+                
+                                <fieldset class="input-legend">
+                                    <legend class="input-legend">Tipo</legend>
+                
+                                    <div class="box-input">
+                                        <input type="radio" name="edit_entry_type" id="account-<?php echo $entry['id']?>" value="account" <?php echo $entry['entry_type'] == 'account' ? 'checked' : '' ; ?>>
+                                        <label for="account-<?php echo $entry['id']?>">Conta corrente</label>    
+                                    </div>        
+                
+                                    <div class="box-input">
+                                        <input type="radio" name="edit_entry_type" id="credit-<?php echo $entry['id']?>" value="credit" <?php echo $entry['entry_type'] == 'credit' ? 'checked' : '' ; ?>>
+                                        <label for="credit-<?php echo $entry['id']?>">Crédito</label>                
+                                    </div>        
+                
+                                </fieldset>
+                
+                                <div class="box-input label-row">
+                                    <label for="edit_entry_description-<?php echo $entry['id']?>" class="input-legend">Descrição da despesa</label>
+                                    <textarea name="edit_entry_description" id="edit_entry_description-<?php echo $entry['id']?>"><?php echo isset( $entry['entry_description'] ) ? $entry['entry_description'] : '' ?></textarea>
+                                </div>
+                                
+                                <fieldset class="input-legend">
+                                    <legend class="input-legend">Recorrencia</legend>
+                
+                                    <div class="box-input">
+                                        <input type="radio" name="edit_entry_recurrence" id="edit_no_recurrence-<?php echo $entry['id']; ?>" value="no_recurrence" <?php echo $entry['entry_recurrence'] == 'no_recurrence' ? 'checked' : '' ; ?>>
+                                        <label for="edit_no_recurrence-<?php echo $entry['id']; ?>">Sem recorrência</label>
+                                    </div>        
+                
+                                    <div class="box-input">
+                                        <input type="radio" name="edit_entry_recurrence" id="edit_installment-<?php echo $entry['id']; ?>" class="installment-recurrence" value="installment" <?php echo $entry['entry_recurrence'] == 'installment' ? 'checked' : '' ; ?>>
+                                        <label for="edit_installment-<?php echo $entry['id']; ?>">Parcelar</label>            
+                                    </div>        
+                
+                                    <div class="box-input">
+                                        <input type="radio" name="edit_entry_recurrence" id="edit_fixed-<?php echo $entry['id']; ?>" value="fixed" <?php echo $entry['entry_recurrence'] == 'fixed' ? 'checked' : '' ; ?>>
+                                        <label for="edit_fixed-<?php echo $entry['id']; ?>">Fixa</label>            
+                                    </div>        
+                                </fieldset>
+                
+                                <?php 
+                                    if( $entry['entry_recurrence'] == 'installment' ) { ?>
+                                        <div id="installments-<?php echo $entry['entry_recurrence']; ?>" class="box-input label-row installments-toggle">
+                                            <label for="edit_entry_qty_installments" class="input-legend">Quantidade de parcelas</label>
+                                            <input type="number" name="edit_entry_qty_installments" id="edit_entry_qty_installments" value="<?php echo $entry['entry_qty_installments']?>">
+                                        </div>
+                                    <?php }
+                                ?>
+                                    
+                                <div class="box-input label-row">
+                                    <label for="edit_entry_category-<?php echo $entry['id']?>" class="input-legend">Categoria</label>
+                                    <input type="text" name="edit_entry_category" id="edit_entry_category-<?php echo $entry['id']?>" <?php echo isset( $entry['entry_category'] ) ? 'value="' . $entry['entry_category'] . '"' : '' ?>>
+                                </div>
+                                
+                                <div class="box-input label-row">
+                                    <label for="edit_entry_subcategory-<?php echo $entry['id']?>" class="input-legend">Subcategoria</label>
+                                    <input type="text" name="edit_entry_subcategory" id="edit_entry_subcategory-<?php echo $entry['id']?>" <?php echo isset( $entry['entry_subcategory'] ) ? 'value="' . $entry['entry_subcategory'] . '"' : '' ?>>
+                                </div>
+                
+                                <input type="hidden" name="entry_id" value="<?php echo $entry['id']; ?>">
+                                
+                                <button type="submit" class="btn btn-primary">Alterar</button>
+                            </form>
+            
+                            </div>
+
+                        <?php
+                        $i++;
+                    }
+                    
+                    ?>
+            
+                <?php endforeach; ?>
+
+                </div>
+                <div class="day-line-main"><?php print_r( $brApi->get_array_date_int( $daysWithEntry[$i] )['day'] ); ?></div>
             </div>
 
         </div>

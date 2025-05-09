@@ -157,7 +157,11 @@ h2.section-title > span {
   display: flex;
 }
 
-.day-line:not(:first-of-type) {
+.day-line-box {
+  display: flex;
+}
+
+.day-line-box:not(:first-of-type) {
   margin-top: 5px;
 }
 
@@ -435,5 +439,36 @@ label.input-legend {
     justify-content: center;
     align-items: center;
     transition: 0.1s;
+  }
+}
+
+#display-entry-sumary {
+  .entry-box-for-day {
+    flex: 1;
+  }
+
+  .day-line-main {
+    display: flex;
+    gap: 5px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 28px;
+  }
+
+  .day-line-main::before {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    width: 4px;
+    background: var(--primary);
+  }
+
+  .day-line-main::after {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    width: 4px;
+    background: var(--primary);
   }
 }
