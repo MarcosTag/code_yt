@@ -26,7 +26,7 @@
 			$entrys = Container::getModel( 'Entry' );
 			$month = date('m');
 			$year = date('Y');
-			$getEntrys = $entrys->get_entrys_for_month( $month, $year );
+			$getEntrys = $entrys->get_entrys_for_month( $month, $year, true );
 		?>
 
 		<header>

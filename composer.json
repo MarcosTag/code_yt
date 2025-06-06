@@ -1,18 +1,18 @@
 {
-	"name": "miniframework",
-	"require": {
-		"php": ">= 7.0"
-	},
-	"authors": [
-		{
-			"name": "Jorge Sant Ana",
-			"email": "jorge@teste.com.br"
-		}
-	],
-	"autoload": {
-		"psr-4": {
-			"App\\": "App/",
-			"MF\\": "vendor/MF/"
-		}
-	}
+  "name": "marcostag/mt_finance",
+  "require": {
+    "php": ">= 7.0"
+  },
+  "authors": [
+    {
+      "name": "MarcosTag",
+      "email": "webmarcostag@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "App\\": "App/",
+      "MF\\": "vendor/MF/"
+    }
+  }
 }

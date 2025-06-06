@@ -1,5 +1,13 @@
-#querys
-##tables
+/**
+ *
+ * MT FINANCE
+ * O MT Finance é um aplicativo voltado para o controle de finanças pessoais. No momento, não há sistema de autenticação, nem autorização. Para utilizá-lo basta criar as querys necessárias e rodar 
+ * o php na pasta public e iniciar os lançamentos;
+ *
+ */
+
+querys
+##tables necessárias para o funcionamento correto do app.
 CREATE TABLE entry(
 	id int NOT null AUTO_INCREMENT PRIMARY KEY,
     id_for_entry varchar(100) NOT null,

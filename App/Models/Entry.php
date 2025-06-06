@@ -153,7 +153,7 @@ class Entry extends Model {
      * 
      * retorna os lançamentos por mês
      */
-    public function get_entrys_for_month( int $month, int $year ) {
+    public function get_entrys_for_month( int $month, int $year, $effected = false ) {
 
         $query = '
             select 
@@ -165,6 +165,19 @@ class Entry extends Model {
             order by
                 entry_expected_date asc
         ';
+
+        if ( $effected ) {
+            $query = '
+            select 
+                id,  id_for_entry, entry_value, entry_nature, entry_expected_date, entry_type, entry_description, entry_recurrence, entry_qty_installments, entry_effected, entry_category, entry_subcategory
+            from
+                entry
+            where
+                MONTH(entry_expected_date) = :month && YEAR(entry_expected_date) = :year && entry_effected = true
+            order by
+                entry_expected_date asc
+        ';
+        }
 
         $stmt = $this->db->prepare( $query );
 
