@@ -197,6 +197,52 @@ class Entry extends Model {
         }
     }
 
+    public function count_entrys_for_day( int $day, int $month, int $year, $effected = false ) {
+        $query = '
+            select
+                count(id_for_entry)
+            as
+                total_entrys
+            from
+                entry
+            where
+                MONTH(entry_expected_date) = :month && YEAR(entry_expected_date) = :year && DAY(entry_expected_date) = :day && entry_effected = false
+            
+        ';
+
+        if ( $effected ) {
+            $query = '
+            select
+                count(id_for_entry)
+            as
+                total_entrys
+            from
+                entry
+            where
+                MONTH(entry_expected_date) = :month && YEAR(entry_expected_date) = :year && DAY(entry_expected_date) = :day && entry_effected = true
+            
+        ';
+        }
+
+        $stmt = $this->db->prepare( $query );
+
+        $stmt->bindValue( ':day', $day );
+        $stmt->bindValue( ':month', $month );
+        $stmt->bindValue( ':year', $year );
+
+        try {
+
+            $stmt->execute();
+		    return $stmt->fetch( \PDO::FETCH_ASSOC )['total_entrys'];
+
+        } catch (\Throwable $th) {
+            echo '<pre>';
+            print_r( $th );
+            echo '</pre>';
+
+        }
+    }
+
     public function get_entry_recurrence_by_id( $id ) {
 
         $query = '
@@ -609,6 +655,19 @@ class Entry extends Model {
 
     }
 
+    public function get_qtt_entrys_effected_per_day( $month, $day ) {
+        
+        $query = '
+            count  
+                id_for_entry
+            where 
+
+
+
+        ';
+
+    }   
+
     public function get_format_display_entry_sumary( $month, $year ) {
 
         $brApi = new BrAPI();
@@ -623,8 +682,11 @@ class Entry extends Model {
 
             <div class="day-line-box">
 
+                <!-- <div class="sumary-of-entries">
+                    TESTE
+                </div> -->
+
                 <div class="entry-box-for-day">
-        
                 <?php foreach( $entrys as $key => $entry ) : ?>
 
                     <?php 
@@ -774,6 +836,11 @@ class Entry extends Model {
                         <?php
                         continue;
                     } else { ?>
+                        </div>
+                        <div class="sumary-of-entries">
+                            <div>Total de Lançamentos do dia: <?php echo $this->count_entrys_for_day( $brApi->get_array_date_int( $daysWithEntry[$i] )['day'], $month, $year, true ) + $this->count_entrys_for_day( $brApi->get_array_date_int( $daysWithEntry[$i] )['day'], $month, $year, false ) ?></div>
+                            <div>Lançamentos Efetivados: <?php echo $this->count_entrys_for_day( $brApi->get_array_date_int( $daysWithEntry[$i] )['day'], $month, $year, true ) ?></div>
+                            <div>Lançamentos NÃO Efetivados: <?php echo $this->count_entrys_for_day( $brApi->get_array_date_int( $daysWithEntry[$i] )['day'], $month, $year, false ) ?></div>
                         </div>
                         <div class="day-line-main"><?php print_r( $brApi->get_array_date_int( $daysWithEntry[$i] )['day'] ); ?></div>
                         </div>
@@ -927,6 +994,12 @@ class Entry extends Model {
                     ?>
             
                 <?php endforeach; ?>
+
+                </div>
+                <div class="sumary-of-entries">
+                    <div>Total de Lançamentos do dia: <?php echo $this->count_entrys_for_day( $brApi->get_array_date_int( $daysWithEntry[$i] )['day'], $month, $year, true ) + $this->count_entrys_for_day( $brApi->get_array_date_int( $daysWithEntry[$i] )['day'], $month, $year, false ) ?></div>
+                    <div>Lançamentos Efetivados: <?php echo $this->count_entrys_for_day( $brApi->get_array_date_int( $daysWithEntry[$i] )['day'], $month, $year, true ) ?></div>
+                    <div>Lançamentos NÃO Efetivados: <?php echo $this->count_entrys_for_day( $brApi->get_array_date_int( $daysWithEntry[$i] )['day'], $month, $year, false ) ?></div>
 
                 </div>
                 <div class="day-line-main"><?php print_r( $brApi->get_array_date_int( $daysWithEntry[$i] )['day'] ); ?></div>

@@ -159,6 +159,13 @@ h2.section-title > span {
 
 .day-line-box {
   display: flex;
+
+  /* .sumary-of-entries {
+    display: flex;
+
+    align-items: center;
+    height: 80px;
+  } */
 }
 
 .day-line-box:not(:first-of-type) {
@@ -338,6 +345,9 @@ label.input-legend {
     border: 1px solid var(--border-dark-color);
     border-radius: 2px;
 
+    /** TESTE ********************/
+    display: none;
+
     .box-input {
       font-family: "encode-sans-expanded-medium";
       font-size: 10px;
@@ -445,6 +455,9 @@ label.input-legend {
 #display-entry-sumary {
   .entry-box-for-day {
     flex: 1;
+
+    /**TESTES *****************/
+    /* display: none; */
   }
 
   .day-line-main {
